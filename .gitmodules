@@ -1,0 +1,6 @@
+[submodule "monokai.terminal"]
+	path = monokai.terminal
+	url = https://github.com/stephenway/monokai.terminal
+[submodule "vim"]
+	path = vim
+	url = https://github.com/RobbieClarken/vim
