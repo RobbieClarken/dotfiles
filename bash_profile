@@ -2,6 +2,8 @@ alias ll='ls -l'
 alias grep='grep --color'
 alias ipython='ipython --pylab'
 
+export EDITOR=vim
+
 export HISTCONTROL=ignoreboth
 export HISTSIZE=10000
 
