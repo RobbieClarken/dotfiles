@@ -15,8 +15,9 @@ export EPICS_HOST_ARCH=darwin-x86
 
 unset SSH_ASKPASS
 
+PATH=/usr/local/bin:$PATH
 PATH=/usr/local/share/python:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
-export PATH=$PATH
+export PATH
 
 . ~/.dotfiles/nvm/nvm.sh
