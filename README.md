@@ -8,6 +8,6 @@ git submodule init
 git submodule update
 # Follow instructions in vim/README.md
 ln -s ~/.dotfiles/bash_profile ~/.bash_profile
-git config --global core.excludesfile ~/.dotfiles/gitignore_global
+ln -s ~/.dotfiles/gitconfig ~/.gitconfig
 open monokai.terminal/Monokai.terminal
 ```
