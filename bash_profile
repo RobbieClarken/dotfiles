@@ -18,3 +18,5 @@ unset SSH_ASKPASS
 PATH=/usr/local/share/python:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH=$PATH
+
+. ~/.dotfiles/nvm/nvm.sh
