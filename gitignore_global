@@ -38,6 +38,11 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
-# Temporary Files #
+# Temporary files #
 ###################
 *.swp
+*~
+
+# Module directories #
+######################
+node_modules/
