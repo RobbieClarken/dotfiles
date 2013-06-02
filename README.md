@@ -2,7 +2,7 @@ Installation
 ------------
 
 ```bash
-git clone https://github.com/RobbieClarken/dotfiles.git ~/.dotfiles
+git clone git@github.com:RobbieClarken/dotfiles.git
 cd ~/.dotfiles
 git submodule init
 git submodule update
