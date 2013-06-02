@@ -10,8 +10,19 @@ export HISTSIZE=10000
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
-export EPICS_BASE=/Library/EPICS/Base
-export EPICS_HOST_ARCH=darwin-x86
+os=$(uname -s | tr 'A-Z' 'a-z')
+machine=$(uname -m)
+
+case "$os" in
+  linux)
+    export EPICS_BASE=/opt/epics/base
+    export EPICS_HOST_ARCH="$os-$machine"
+  ;;
+  darwin)
+    export EPICS_BASE=/Library/EPICS/Base
+    export EPICS_HOST_ARCH=darwin-x86
+  ;;
+esac
 
 unset SSH_ASKPASS
 
