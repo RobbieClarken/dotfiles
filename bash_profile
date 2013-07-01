@@ -15,6 +15,11 @@ machine=$(uname -m)
 
 case "$os" in
   linux)
+
+    if [ -f "${HOME}/.bashrc" ] ; then
+      source "${HOME}/.bashrc"
+    fi
+
     export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
   ;;
