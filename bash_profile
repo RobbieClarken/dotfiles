@@ -10,11 +10,11 @@ export HISTSIZE=10000
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
-os=$(uname -s | tr 'A-Z' 'a-z')
+os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
 machine=$(uname -m)
 
 case "$os" in
-  linux)
+  linux|cygwin)
 
     if [ -f "${HOME}/.bashrc" ] ; then
       source "${HOME}/.bashrc"
