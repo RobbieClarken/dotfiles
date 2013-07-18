@@ -2,10 +2,7 @@ Installation
 ------------
 
 ```bash
-git clone git@github.com:RobbieClarken/dotfiles.git
-cd ~/.dotfiles
-git submodule init
-git submodule update
+git clone --recursive git@github.com:RobbieClarken/dotfiles.git
 # Follow instructions in vim/README.md
 ln -s ~/.dotfiles/bash_profile ~/.bash_profile
 ln -s ~/.dotfiles/gitconfig ~/.gitconfig
