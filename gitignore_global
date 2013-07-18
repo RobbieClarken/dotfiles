@@ -42,7 +42,15 @@ Thumbs.db
 ###################
 *.swp
 *~
+tmp
 
 # Module directories #
 ######################
 node_modules/
+Pods/
+
+# Local configuration #
+#######################
+xcuserdata/
+.dropbox
+Podfile.lock
