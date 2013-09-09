@@ -1,5 +1,5 @@
-alias ll='ls -l'
-alias grep='grep --color'
+
+# Environment variables
 
 export EDITOR=vim
 
@@ -10,16 +10,16 @@ export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\$ '
 
+unset SSH_ASKPASS
+
 os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
 machine=$(uname -m)
 
 case "$os" in
   linux|cygwin)
-
-    if [ -f "${HOME}/.bashrc" ] ; then
+    if [ -f "${HOME}/.bashrc" ]; then
       source "${HOME}/.bashrc"
     fi
-
     export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
   ;;
@@ -29,8 +29,6 @@ case "$os" in
   ;;
 esac
 
-unset SSH_ASKPASS
-
 PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=/usr/local/share/python:$PATH
@@ -38,4 +36,12 @@ PATH=/usr/local/Cellar/ruby/latest/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH
 
-. ~/.dotfiles/nvm/nvm.sh
+if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
+  source ~/.dotfiles/nvm/nvm.sh
+fi
+
+# Aliases and functions
+
+alias ll='ls -l'
+alias grep='grep --color'
+calc() { echo "scale=3;$@" | bc; }
