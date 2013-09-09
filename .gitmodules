@@ -1,9 +1,9 @@
 [submodule "monokai.terminal"]
 	path = monokai.terminal
-	url = git@github.com:stephenway/monokai.terminal.git
+	url = https://github.com/stephenway/monokai.terminal.git
 [submodule "vim"]
 	path = vim
-	url = git@github.com:RobbieClarken/vim.git
+	url = https://github.com/RobbieClarken/vim.git
 [submodule "nvm"]
 	path = nvm
-	url = git@github.com:creationix/nvm.git
+	url = https://github.com/creationix/nvm.git
