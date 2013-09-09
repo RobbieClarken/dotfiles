@@ -13,7 +13,7 @@ export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\$ '
 unset SSH_ASKPASS
 
 os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
-machine=$(uname -m)
+machine=$(uname -m | sed 's/i686/x86/')
 
 case "$os" in
   linux|cygwin)
