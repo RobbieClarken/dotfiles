@@ -5,6 +5,7 @@ export EDITOR=vim
 
 export HISTCONTROL=ignoreboth
 export HISTSIZE=10000
+export HISTFILESIZE=10000
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
