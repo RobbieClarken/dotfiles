@@ -18,9 +18,6 @@ machine=$(uname -m | sed 's/i686/x86/')
 
 case "$os" in
   linux|cygwin)
-    if [ -f "${HOME}/.bashrc" ]; then
-      source "${HOME}/.bashrc"
-    fi
     export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
   ;;
@@ -36,6 +33,10 @@ PATH=/usr/local/share/python:$PATH
 PATH=/usr/local/Cellar/ruby/latest/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH
+
+if [ -f ~/.bashrc ]; then
+  source ~/.bashrc
+fi
 
 if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
   source ~/.dotfiles/nvm/nvm.sh
