@@ -46,6 +46,7 @@ Thumbs.db
 *.swp
 *~
 tmp
+out/
 
 # Module directories #
 ######################
