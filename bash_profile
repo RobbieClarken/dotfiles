@@ -46,4 +46,4 @@ fi
 
 alias ll='ls -l'
 alias grep='grep --color'
-function calc() { echo "scale=3;$@" | bc; }
+function calc { echo "scale=3;$@" | bc; }
