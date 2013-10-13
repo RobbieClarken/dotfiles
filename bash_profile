@@ -47,3 +47,25 @@ fi
 alias ll='ls -l'
 alias grep='grep --color'
 function calc { echo "scale=3;$@" | bc; }
+
+function usage {
+  # The following constants must be defined:
+  # INTERNODE_SERVICE_ID
+  # INTERNODE_USERNAME
+  # INTERNODE_PASSWORD
+  bytes_per_GB=1073741824
+  seconds_per_day=86400
+  url="https://customer-webtools-api.internode.on.net/api/v1.5/$INTERNODE_SERVICE_ID/usage"
+  xml=$(curl -s -u "$INTERNODE_USERNAME:$INTERNODE_PASSWORD" $url | tr -d '\n')
+  quota=$(echo "$xml" | sed -E 's/.*quota="([0-9]*)".*/\1/')
+  traffic=$(echo "$xml" | sed -E 's/.*>([0-9]*)<\/traffic>.*/\1/')
+  remaining=$(calc "$quota-$traffic")
+  remaining_GB=$(calc $remaining/$bytes_per_GB)
+  rollover=$(echo "$xml" | sed -E 's/.*rollover="([0-9\-]*)".*/\1/')
+  rollover_s=$(date -j -f '%Y-%M-%d %H:%M:%S' "$rollover 00:00:00" '+%s')
+  now_s=$(date '+%s')
+  days=$(calc "($rollover_s-$now_s)/$seconds_per_day")
+  echo "Used: $(calc 100*$traffic/$quota)%"
+  echo "Remaining: $remaining_GB GB ($(calc $remaining_GB/$days) GB/day)"
+  echo "Rollover: $rollover ($days days)"
+}
