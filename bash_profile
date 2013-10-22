@@ -62,7 +62,7 @@ function usage {
   remaining=$(calc "$quota-$traffic")
   remaining_GB=$(calc $remaining/$bytes_per_GB)
   rollover=$(echo "$xml" | sed -E 's/.*rollover="([0-9\-]*)".*/\1/')
-  rollover_s=$(date -j -f '%Y-%M-%d %H:%M:%S' "$rollover 00:00:00" '+%s')
+  rollover_s=$(date -j -f '%Y-%m-%d %H:%M:%S' "$rollover 00:00:00" '+%s')
   now_s=$(date '+%s')
   days=$(calc "($rollover_s-$now_s)/$seconds_per_day")
   echo "Used: $(calc 100*$traffic/$quota)%"
