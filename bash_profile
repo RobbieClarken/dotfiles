@@ -34,8 +34,8 @@ PATH=/usr/local/Cellar/ruby/latest/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH
 
-if [ -f ~/.bashrc ]; then
-  source ~/.bashrc
+if [ -f ~/.bash_local ]; then
+  source ~/.bash_local
 fi
 
 if [ -f ~/.dotfiles/nvm/nvm.sh ]; then

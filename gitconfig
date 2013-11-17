@@ -1,8 +1,6 @@
 [user]
 	name = RobbieClarken
 	email = robbie.clarken@gmail.com
-[credential]
-	helper = osxkeychain
 [color]
 	ui = true
 [core]
