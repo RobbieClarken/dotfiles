@@ -56,5 +56,7 @@ Pods/
 # Local configuration #
 #######################
 xcuserdata/
+xcshareddata/
+contents.xcworkspacedata
 .dropbox
 Podfile.lock
