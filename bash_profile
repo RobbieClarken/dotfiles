@@ -29,8 +29,6 @@ esac
 
 PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=/usr/local/bin:$PATH
-PATH=/usr/local/share/python:$PATH
-PATH=/usr/local/Cellar/ruby/latest/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH
 
