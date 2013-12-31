@@ -5,3 +5,5 @@
 	ui = true
 [core]
 	excludesfile = ~/.dotfiles/gitignore_global
+[push]
+	default = simple
