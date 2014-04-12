@@ -15,4 +15,4 @@ ln -sf "$HOME/.dotfiles/bash_profile" "$bash_file"
 ln -sf "$HOME/.dotfiles/gitconfig" "$HOME/.gitconfig"
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
-vim +BundleInstall +qall
+vim +PluginInstall +qall

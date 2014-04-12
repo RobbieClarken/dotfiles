@@ -9,7 +9,7 @@ export HISTFILESIZE=10000
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
-export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\$ '
+export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\n\$ '
 
 unset SSH_ASKPASS
 
@@ -44,6 +44,8 @@ fi
 
 alias ll='ls -l'
 alias grep='grep --color'
+alias venv='source venv/bin/activate'
+
 function calc { echo "scale=3;$@" | bc; }
 
 function usage {
