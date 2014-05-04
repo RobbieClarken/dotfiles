@@ -1,7 +1,13 @@
 #!/bin/bash
 
-os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
+keep_git_user="$1"
+if [[ -z "$keep_git_user" ]]
+then
+  read -p "Keep git user settings for Robbie Clarken (y/n)? "
+  keep_git_user="$REPLY"
+fi
 
+os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
 case "$os" in
   linux|cygwin)
     bash_file="$HOME/.bashrc"
@@ -9,10 +15,18 @@ case "$os" in
   darwin)
     bash_file="$HOME/.bash_profile"
   ;;
+  *)
+    echo "Unrecognized operating system."
+    exit 1
+  ;;
 esac
 
 ln -sf "$HOME/.dotfiles/bash_profile" "$bash_file"
 ln -sf "$HOME/.dotfiles/gitconfig" "$HOME/.gitconfig"
+if [[ "$keep_git_user" != "y" ]]
+then
+  git config --global --remove-section user
+fi
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
 vim +PluginInstall +qall
