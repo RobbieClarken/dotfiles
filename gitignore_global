@@ -60,4 +60,5 @@ xcshareddata/
 contents.xcworkspacedata
 .dropbox
 Podfile.lock
-venv/
+.venv/
+.ipynb_checkpoints/

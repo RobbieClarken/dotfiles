@@ -32,10 +32,6 @@ PATH=/usr/local/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 export PATH
 
-if [ -f ~/.bash_local ]; then
-  source ~/.bash_local
-fi
-
 if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
   source ~/.dotfiles/nvm/nvm.sh
 fi
@@ -44,7 +40,7 @@ fi
 
 alias ll='ls -l'
 alias grep='grep --color'
-alias venv='source venv/bin/activate'
+alias venv='source .venv/bin/activate'
 
 function calc { echo "scale=3;$@" | bc; }
 
@@ -69,3 +65,7 @@ function usage {
   echo "Remaining: $remaining_GB GB ($(calc $remaining_GB/$days) GB/day)"
   echo "Rollover: $rollover ($days days)"
 }
+
+if [ -f ~/.bash_local ]; then
+  source ~/.bash_local
+fi
