@@ -5,9 +5,7 @@
 	ui = true
 [core]
 	excludesfile = ~/.dotfiles/gitignore_global
-[push]
-	default = simple
 [init]
-	templatedir = /Users/robbie/.dotfiles/git_template
+	templatedir = ~/.dotfiles/git_template
 [alias]
 	ctags = !.git/hooks/ctags
