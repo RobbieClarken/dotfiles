@@ -17,7 +17,14 @@ os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
 machine=$(uname -m | sed 's/i686/x86/')
 
 case "$os" in
-  linux|cygwin)
+  linux)
+    export EPICS_BASE=/opt/epics/base
+    export EPICS_HOST_ARCH="$os-$machine"
+
+    # Remap caps lock to ctrl
+    setxkbmap -option ctrl:nocaps
+  ;;
+  cygwin)
     export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
   ;;
