@@ -43,6 +43,10 @@ if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
   source ~/.dotfiles/nvm/nvm.sh
 fi
 
+if [ -f /usr/local/etc/bash_completion ]; then
+  . /usr/local/etc/bash_completion
+fi
+
 # Aliases and functions
 
 alias ll='ls -l'
