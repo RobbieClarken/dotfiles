@@ -9,3 +9,5 @@
 	templatedir = ~/.dotfiles/git_template
 [alias]
 	ctags = !.git/hooks/ctags
+[push]
+	default = current

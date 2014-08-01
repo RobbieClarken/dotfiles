@@ -21,8 +21,10 @@ case "$os" in
     export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
 
-    # Remap caps lock to ctrl
-    setxkbmap -option ctrl:nocaps
+    if hash setxkbmap 2>/dev/null; then
+      # Remap caps lock to ctrl
+      setxkbmap -option ctrl:nocaps
+    fi
   ;;
   cygwin)
     export EPICS_BASE=/opt/epics/base
