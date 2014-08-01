@@ -56,10 +56,13 @@ alias venv='source .venv/bin/activate'
 function calc { echo "scale=3;$@" | bc; }
 
 function usage {
-  # The following constants must be defined:
-  # INTERNODE_SERVICE_ID
-  # INTERNODE_USERNAME
-  # INTERNODE_PASSWORD
+  if [[ -z "$INTERNODE_USERNAME" ]]\
+     || [[ -z "$INTERNODE_PASSWORD" ]]\
+     || [[ -z "$INTERNODE_SERVICE_ID" ]]
+  then
+    echo "INTERNODE_USERNAME, INTERNODE_PASSWORD and INTERNODE_SERVICE_ID must be set"
+    return 1
+  fi
   bytes_per_GB=1073741824
   seconds_per_day=86400
   url="https://customer-webtools-api.internode.on.net/api/v1.5/$INTERNODE_SERVICE_ID/usage"

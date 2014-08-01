@@ -27,6 +27,10 @@ if [[ "$keep_git_user" != "y" ]]
 then
   git config --global --remove-section user
 fi
+if [[ -e "$HOME/.vim" ]]
+then
+  rm -rf "$HOME/.vim"
+fi
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
 vim +PluginInstall +qall
