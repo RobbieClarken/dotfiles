@@ -39,7 +39,8 @@ esac
 PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=/usr/local/bin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
-PATH=/Applications/calibre.app/Contents/MacOS/:$PATH
+PATH=/Applications/calibre.app/Contents/MacOS:$PATH
+PATH=$PATH:$HOME/Developer/bin
 export PATH
 
 if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
