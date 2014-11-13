@@ -7,6 +7,7 @@ export HISTCONTROL=ignoreboth
 export HISTSIZE=10000
 export HISTFILESIZE=10000
 
+export TERM=xterm-256color # Needed for tmux on linux
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\n\$ '
