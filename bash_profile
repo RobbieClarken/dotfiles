@@ -56,6 +56,7 @@ fi
 
 alias ll='ls -l'
 alias grep='grep --color'
+alias redis='redis-cli'
 alias venv='source .venv/bin/activate'
 
 function calc { echo "scale=3;$@" | bc; }

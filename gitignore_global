@@ -28,6 +28,7 @@ dist/
 ######################
 *.log
 *.sqlite
+*.sqlite3
 
 # OS generated files #
 ######################
@@ -48,6 +49,7 @@ Thumbs.db
 tmp
 out/
 .netrwhist
+.webassets-cache/
 
 # Module directories #
 ######################
@@ -63,3 +65,5 @@ contents.xcworkspacedata
 Podfile.lock
 .venv/
 .ipynb_checkpoints/
+TODO
+*.ipynb
