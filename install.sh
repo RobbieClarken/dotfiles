@@ -22,7 +22,7 @@ case "$os" in
 esac
 
 ln -sf "$HOME/.dotfiles/bash_profile" "$bash_file"
-ln -sf "$HOME/.dotfiles/gitconfig" "$HOME/.gitconfig"
+ln -sf "$HOME/.dotfiles/git/gitconfig" "$HOME/.gitconfig"
 if [[ "$keep_git_user" != "y" ]]
 then
   git config --global --remove-section user
@@ -31,7 +31,7 @@ if [[ -e "$HOME/.vim" ]]
 then
   rm -rf "$HOME/.vim"
 fi
-ln -snf "$HOME/.dotfiles/tmux.conf" "$HOME/.tmux.conf"
+ln -snf "$HOME/.dotfiles/tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
 vim +PluginInstall +qall
