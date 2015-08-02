@@ -1,0 +1,8 @@
+#!/bin/sh
+bad_string="BLOCK_COMMIT"
+full_diff=`git diff --cached --`
+if [[ $full_diff =~ $bad_string ]]
+then
+  echo "Cannot commit file containing '$bad_string'" >&2
+  exit 1
+fi

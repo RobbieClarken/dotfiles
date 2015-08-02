@@ -67,3 +67,4 @@ Podfile.lock
 .ipynb_checkpoints/
 TODO
 *.ipynb
+.lvimrc
