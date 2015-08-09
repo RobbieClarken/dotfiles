@@ -54,9 +54,11 @@ fi
 # Aliases and functions
 
 alias ll='ls -l'
+alias l='ll'
 alias grep='grep --color'
 alias redis='redis-cli'
 alias venv='source .venv/bin/activate'
+alias nb='tmux new-window -n ipython "source .venv/bin/activate; ipython notebook"'
 
 function calc { echo "scale=3;$@" | bc; }
 
