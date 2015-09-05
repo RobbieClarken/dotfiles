@@ -64,6 +64,7 @@ contents.xcworkspacedata
 .dropbox
 Podfile.lock
 .venv/
+.venv3/
 .ipynb_checkpoints/
 TODO
 *.ipynb

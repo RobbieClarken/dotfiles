@@ -43,8 +43,8 @@ PATH=/Applications/calibre.app/Contents/MacOS:$PATH
 PATH=$PATH:$HOME/Developer/bin:$HOME/.dotfiles/bin
 export PATH
 
-if [ -f ~/.dotfiles/nvm/nvm.sh ]; then
-  source ~/.dotfiles/nvm/nvm.sh
+if [ -f ~/.nvm/nvm.sh ]; then
+  source ~/.nvm/nvm.sh
 fi
 
 if [ -f /usr/local/etc/bash_completion ]; then
@@ -58,7 +58,11 @@ alias l='ll'
 alias grep='grep --color'
 alias redis='redis-cli'
 alias venv='source .venv/bin/activate'
+alias venv3='source .venv3/bin/activate'
+alias cenv='python -m virtualenv .venv; venv'
+alias cenv3='python3 -m virtualenv .venv3; venv3'
 alias nb='tmux new-window -n ipython "source .venv/bin/activate; ipython notebook"'
+alias scikit='pip install numpy scipy matplotlib pandas scikit-learn jupyter'
 
 function calc { echo "scale=3;$@" | bc; }
 
