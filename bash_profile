@@ -61,8 +61,8 @@ alias venv='source .venv/bin/activate'
 alias venv3='source .venv3/bin/activate'
 alias cenv='python -m virtualenv .venv; venv'
 alias cenv3='python3 -m virtualenv .venv3; venv3'
-alias nb='tmux new-window -n ipython "source .venv/bin/activate; ipython notebook"'
-alias scikit='pip install numpy scipy matplotlib pandas scikit-learn jupyter'
+alias nb='tmux new-window -n jupyter "source .venv3/bin/activate; jupyter notebook"'
+alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-learn'
 
 function calc { echo "scale=3;$@" | bc; }
 
