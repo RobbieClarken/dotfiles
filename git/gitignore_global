@@ -67,5 +67,8 @@ Podfile.lock
 .venv3/
 .ipynb_checkpoints/
 TODO
+TODO.md
 *.ipynb
 .lvimrc
+coverage/
+.coveralls.yml

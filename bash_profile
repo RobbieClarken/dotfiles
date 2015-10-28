@@ -16,9 +16,9 @@ unset SSH_ASKPASS
 os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
 machine=$(uname -m | sed 's/i686/x86/')
 
+export EPICS_BASE=/opt/epics/base
 case "$os" in
   linux)
-    export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
 
     if hash setxkbmap 2>/dev/null; then
@@ -27,11 +27,9 @@ case "$os" in
     fi
   ;;
   cygwin)
-    export EPICS_BASE=/opt/epics/base
     export EPICS_HOST_ARCH="$os-$machine"
   ;;
   darwin)
-    export EPICS_BASE=/Library/EPICS/Base
     export EPICS_HOST_ARCH=darwin-x86
   ;;
 esac
@@ -65,6 +63,10 @@ alias nb='tmux new-window -n jupyter "source .venv3/bin/activate; jupyter notebo
 alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-learn'
 
 function calc { echo "scale=3;$@" | bc; }
+
+function ssh-copy-key {
+  ssh "$1" "cat >> ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
+}
 
 function usage {
   if [[ -z "$INTERNODE_USERNAME" ]]\
