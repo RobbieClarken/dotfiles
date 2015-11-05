@@ -31,7 +31,8 @@ if [[ -e "$HOME/.vim" ]]
 then
   rm -rf "$HOME/.vim"
 fi
-ln -snf "$HOME/.dotfiles/tmux/tmux.conf" "$HOME/.tmux.conf"
+ln -snf "$HOME/.dotfiles/tmux" "$HOME/.tmux"
+ln -snf "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
 ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
 vim +PluginInstall +qall
