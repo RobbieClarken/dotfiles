@@ -72,3 +72,5 @@ TODO.md
 .lvimrc
 coverage/
 .coveralls.yml
+.cache/
+.tox/
