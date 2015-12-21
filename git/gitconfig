@@ -9,6 +9,8 @@
 	templatedir = ~/.dotfiles/git/git_template
 [alias]
 	ctags = !.git/hooks/ctags
+	sla = log --oneline --decorate --graph --all
+	glog = log -E -i --grep
 [push]
 	default = current
 [pull]
