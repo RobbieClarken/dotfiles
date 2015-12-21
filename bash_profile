@@ -7,12 +7,11 @@ export HISTCONTROL=ignoreboth
 export HISTSIZE=10000
 export HISTFILESIZE=10000
 
-GIT_PROMPT_ONLY_IN_REPO=1
-source "$HOME/.dotfiles/bash-git-prompt/gitprompt.sh"
-
 export TERM=xterm-256color # Needed for tmux on linux
 export CLICOLOR=1
-export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\n\$ '
+
+GIT_PROMPT_THEME=Custom
+source "$HOME/.dotfiles/bash-git-prompt/gitprompt.sh"
 
 unset SSH_ASKPASS
 
@@ -49,7 +48,7 @@ if [ -f ~/.nvm/nvm.sh ]; then
 fi
 
 if [ -f /usr/local/etc/bash_completion ]; then
-  . /usr/local/etc/bash_completion
+  source /usr/local/etc/bash_completion
 fi
 
 # Aliases and functions

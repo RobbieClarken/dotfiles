@@ -31,6 +31,7 @@ if [[ -e "$HOME/.vim" ]]
 then
   rm -rf "$HOME/.vim"
 fi
+ln -snf "$HOME/.dotfiles/git-prompt-colors.sh" "$HOME/.git-prompt-colors.sh"
 ln -snf "$HOME/.dotfiles/tmux" "$HOME/.tmux"
 ln -snf "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
 ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
