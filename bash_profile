@@ -66,6 +66,14 @@ alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-le
 
 function calc { echo "scale=3;$@" | bc; }
 
+g() {
+  if [[ $# > 0 ]]; then
+    git "$@"
+  else
+    git status
+  fi
+}
+
 function ssh-copy-key {
   ssh "$1" "cat >> ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
 }
