@@ -13,6 +13,7 @@
 	glog = log -E -i --grep
 	car = commit --amend --no-edit
   df = diff --word-diff --color-words
+	co = checkout
 [push]
 	default = upstream
 [pull]
