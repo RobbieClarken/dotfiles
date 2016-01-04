@@ -12,13 +12,11 @@
 	sla = log --oneline --decorate --graph --all
 	glog = log -E -i --grep
 	car = commit --amend --no-edit
-  df = diff --word-diff --color-words
+	df = diff --word-diff --color-words
 	co = checkout
-[push]
-	default = upstream
 [pull]
 	rebase = true
 [fetch]
-  prune = true
+	prune = true
 [merge]
-  ff = only
+	ff = only
