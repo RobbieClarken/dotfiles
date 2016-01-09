@@ -53,7 +53,8 @@ fi
 # Aliases and functions
 
 alias ll='ls -l'
-alias l='ll'
+alias la='ll -A'
+alias l='ll -h'
 alias grep='grep --color'
 alias redis='redis-cli'
 alias venv='source .venv/bin/activate'
