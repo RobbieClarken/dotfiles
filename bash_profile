@@ -64,6 +64,8 @@ alias cenv3='python3 -m virtualenv .venv3; venv3'
 alias nb='tmux new-window -n jupyter "source .venv3/bin/activate; jupyter notebook"'
 alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-learn'
 
+alias dc='cd'
+
 function calc { echo "scale=3;$@" | bc; }
 
 g() {

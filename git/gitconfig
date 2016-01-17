@@ -20,3 +20,5 @@
 	prune = true
 [merge]
 	ff = only
+[push]
+	default = simple
