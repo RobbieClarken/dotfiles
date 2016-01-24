@@ -11,9 +11,10 @@
 	ctags = !.git/hooks/ctags
 	sla = log --oneline --decorate --graph --all
 	glog = log -E -i --grep
-	car = commit --amend --no-edit
 	df = diff --word-diff --color-words
 	co = checkout
+	cm = commit -v
+	cma = commit -v --amend
 [pull]
 	rebase = true
 [fetch]

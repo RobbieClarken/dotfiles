@@ -35,11 +35,11 @@ case "$os" in
   ;;
 esac
 
-PATH=/usr/local/sbin:/usr/sbin:/sbin:$PATH
-PATH=/usr/local/bin:$PATH
+PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
 PATH=/Applications/calibre.app/Contents/MacOS:$PATH
 PATH=$PATH:$HOME/Developer/bin:$HOME/.dotfiles/bin
+PATH=".git/safe/../../bin:$PATH"
 export PATH
 
 if [ -f ~/.nvm/nvm.sh ]; then
