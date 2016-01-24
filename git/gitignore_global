@@ -10,6 +10,7 @@
 build/
 dist/
 *.egg-info/
+.cache/
 
 # Packages #
 ############
@@ -50,11 +51,25 @@ tmp
 out/
 .netrwhist
 .webassets-cache/
+.ipynb_checkpoints/
 
 # Module directories #
 ######################
 node_modules/
 Pods/
+.venv/
+.venv3/
+
+# Test output #
+###############
+coverage/
+.coverage
+.tox/
+
+# Personal files #
+##################
+TODO*
+*.ipynb
 
 # Local configuration #
 #######################
@@ -63,13 +78,5 @@ xcshareddata/
 contents.xcworkspacedata
 .dropbox
 Podfile.lock
-.venv/
-.venv3/
-.ipynb_checkpoints/
-TODO*
-*.ipynb
 .lvimrc
-coverage/
 .coveralls.yml
-.cache/
-.tox/
