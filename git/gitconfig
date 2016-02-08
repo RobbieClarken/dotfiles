@@ -9,7 +9,7 @@
 	templatedir = ~/.dotfiles/git/git_template
 [alias]
 	ctags = !.git/hooks/ctags
-	sla = log --oneline --decorate --graph --all -n 38
+	sla = log --oneline --decorate --graph --all -n 30
 	glog = log -E -i --grep
 	df = diff --word-diff --color-words
 	co = checkout
