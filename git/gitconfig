@@ -15,6 +15,7 @@
 	co = checkout
 	cm = commit -v
 	cma = commit -v --amend
+	pf = push --force-with-lease
 [pull]
 	rebase = true
 [fetch]

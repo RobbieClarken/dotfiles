@@ -65,6 +65,7 @@ alias nb='tmux new-window -n jupyter "source .venv3/bin/activate; jupyter notebo
 alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-learn'
 
 alias dc='cd'
+alias oepn='open'
 
 function calc { echo "scale=3;$@" | bc; }
 
