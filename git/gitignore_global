@@ -9,6 +9,7 @@
 *.pyc
 build/
 dist/
+.eggs/
 *.egg-info/
 .cache/
 
@@ -70,6 +71,7 @@ coverage/
 ##################
 TODO*
 *.ipynb
+*.ignore
 
 # Local configuration #
 #######################
@@ -78,3 +80,4 @@ xcuserdata/
 Podfile.lock
 .lvimrc
 .coveralls.yml
+.python-version

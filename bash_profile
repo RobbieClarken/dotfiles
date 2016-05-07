@@ -35,10 +35,11 @@ case "$os" in
   ;;
 esac
 
-PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
-PATH=$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH
-PATH=/Applications/calibre.app/Contents/MacOS:$PATH
-PATH=$PATH:$HOME/Developer/bin:$HOME/.dotfiles/bin
+PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
+PATH="$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH"
+PATH="/Applications/calibre.app/Contents/MacOS:$PATH"
+PATH="$HOME/Developer/bin:$PATH"
+PATH="$HOME/.dotfiles/bin:$PATH"
 PATH=".git/safe/../../bin:$PATH"
 export PATH
 
@@ -48,6 +49,12 @@ fi
 
 if [ -f /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
+fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if hash pyenv 2>/dev/null; then
+  eval "$(pyenv init -)"
 fi
 
 # Aliases and functions
@@ -66,6 +73,7 @@ alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-le
 
 alias dc='cd'
 alias oepn='open'
+alias vmi='vim'
 
 function calc { echo "scale=3;$@" | bc; }
 
@@ -84,3 +92,4 @@ function ssh-copy-key {
 if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
+
