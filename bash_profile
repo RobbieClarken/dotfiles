@@ -51,12 +51,6 @@ if [ -f /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if hash pyenv 2>/dev/null; then
-  eval "$(pyenv init -)"
-fi
-
 # Aliases and functions
 
 alias ll='ls -l'
@@ -70,14 +64,15 @@ alias cenv='python -m virtualenv .venv; venv'
 alias cenv3='python3 -m venv .venv3; venv3; python -m pip install -U pip'
 alias nb='tmux new-window -n jupyter "source .venv3/bin/activate; jupyter notebook"'
 alias scipy='pip install jupyter numpy scipy pandas matplotlib seaborn scikit-learn'
+alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 
 alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
 
-function calc { echo "scale=3;$@" | bc; }
+calc () { echo "scale=3;$@" | bc; }
 
-g() {
+g () {
   if [[ $# > 0 ]]; then
     git "$@"
   else
@@ -85,11 +80,15 @@ g() {
   fi
 }
 
-function ssh-copy-key {
+ssh-copy-key () {
   ssh "$1" "cat >> ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
+}
+
+f8 () {
+  files=$(flake8 -q)
+  if [ "$files" ]; then vim $files; fi
 }
 
 if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
-

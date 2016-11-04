@@ -9,13 +9,16 @@
 	templatedir = ~/.dotfiles/git/git_template
 [alias]
 	ctags = !.git/hooks/ctags
-	sla = log --oneline --decorate --graph --all -n 30
+	l = log --oneline --decorate --all --graph
+	sla = log --oneline --decorate --graph --all
 	glog = log -E -i --grep
 	df = diff --word-diff --color-words
+	dfc = diff --word-diff --color-words --cached
 	co = checkout
 	cm = commit -v
 	cma = commit -v --amend
 	pf = push --force-with-lease
+	dc = diff --word-diff --color-words --cached
 [pull]
 	rebase = true
 [fetch]

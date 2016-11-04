@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+function main {
+  cmd="$1"
+  if [ "$cmd" == "" ]; then
+    docker ps
+    return
+  fi
+  case "$cmd" in
+    clean)
+      docker rm -f $(docker ps -qa)
+      ;;
+    l)
+      docker logs -f $2
+      ;;
+    e)
+      docker exec -it $2 bash
+      ;;
+    *)
+      docker $@
+      ;;
+  esac
+}
+
+main $@

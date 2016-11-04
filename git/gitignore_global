@@ -8,7 +8,6 @@
 *.so
 *.pyc
 build/
-dist/
 .eggs/
 *.egg-info/
 .cache/
@@ -39,7 +38,6 @@ dist/
 ._*
 .Spotlight-V100
 .Trashes
-Icon?
 ehthumbs.db
 Thumbs.db
 
@@ -49,10 +47,14 @@ Thumbs.db
 *.swo
 *~
 tmp
+temp
+*.temp
+*.tmp
 out/
 .netrwhist
 .webassets-cache/
 .ipynb_checkpoints/
+QEGuiConfig.xml
 
 # Module directories #
 ######################
@@ -81,3 +83,4 @@ Podfile.lock
 .lvimrc
 .coveralls.yml
 .python-version
+.idea
