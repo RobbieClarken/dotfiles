@@ -11,14 +11,8 @@
 3. Run the install script:
 
   ```bash
-  ~/.dotfiles/install.sh
+  ~/.dotfiles/install
   ```
-
-4. If on Mac OS X, run the following to install the Monokai Terminal theme:
-
-   ```bash
-   open ~/.dotfiles/monokai.terminal/Monokai.terminal
-   ```
 
 ## Acknowledgements
 
