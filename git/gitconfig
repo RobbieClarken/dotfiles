@@ -5,8 +5,6 @@
 	ui = true
 [core]
 	excludesfile = ~/.dotfiles/git/gitignore_global
-[init]
-	templatedir = ~/.dotfiles/git/git_template
 [alias]
 	ctags = !.git/hooks/ctags
 	l = log --oneline --decorate --all --graph

@@ -3,7 +3,7 @@
 set -e
 
 function main {
-  cmd="$1"
+  cmd="$1"; shift || :
   if [ "$cmd" == "" ]; then
     docker ps
     return
@@ -13,13 +13,31 @@ function main {
       docker rm -f $(docker ps -qa)
       ;;
     l)
-      docker logs -f $2
+      docker logs -f $@
       ;;
     e)
-      docker exec -it $2 bash
+      container="$1"; shift
+      if [[ "$@" != "" ]]; then
+        cmd="$@"
+      else
+        cmd="bash"
+      fi
+      docker exec -it $container $cmd
+      ;;
+    i)
+      container="$1"
+      key="$2"
+      if [ "$key" == "" ]; then
+        docker inspect $container | jq .
+      else
+        docker inspect $container | jq '.[]' | find-by-key $key
+      fi
+      ;;
+    up)
+      docker-compose up $@
       ;;
     *)
-      docker $@
+      docker $cmd $@
       ;;
   esac
 }

@@ -15,7 +15,6 @@ source "$HOME/.dotfiles/bash-git-prompt/gitprompt.sh"
 unset SSH_ASKPASS
 
 os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
-
 export EPICS_BASE=/opt/epics/base
 case "$os" in
   linux)
@@ -32,11 +31,15 @@ case "$os" in
   ;;
 esac
 
+export GOPATH="$HOME/Developer/Go"
+
 PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
 PATH="$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH"
 PATH="$HOME/Developer/bin:$PATH"
 PATH="$HOME/.dotfiles/bin:$PATH"
 PATH=".git/safe/../../bin:$PATH"
+PATH="$PATH:/opt/miniconda3/bin"
+PATH="$GOPATH/bin/:$PATH"
 export PATH
 
 if [ -f ~/.nvm/nvm.sh ]; then
@@ -53,9 +56,9 @@ alias ll='ls -laG'
 alias l='ll -h'
 alias grep='grep --color'
 alias venv='source .venv/bin/activate'
-alias venv3='source .venv3/bin/activate'
-alias cenv='python -m virtualenv .venv; venv'
-alias cenv3='python3 -m venv .venv3; venv3; python -m pip install -U pip'
+alias venv3='venv'
+alias cenv='python3 -m venv .venv && venv3 && python -m pip install -U pip'
+alias cenv3='cenv'
 alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 
 alias dc='cd'

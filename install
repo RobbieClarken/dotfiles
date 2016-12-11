@@ -48,6 +48,10 @@ update_tmux_conf () {
   ln -snf "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
+update_other () {
+  ln -snf "$HOME/.dotfiles/ctags" "$HOME/.ctags"
+}
+
 main () {
   update_bashrc
   update_git

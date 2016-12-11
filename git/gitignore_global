@@ -84,3 +84,4 @@ Podfile.lock
 .coveralls.yml
 .python-version
 .idea
+tags
