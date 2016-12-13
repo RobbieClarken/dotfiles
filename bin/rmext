@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+main () {
+  ext="$1"
+  if [[ "$ext" == "" ]]; then
+    echo "Usage: rmext [extension]"
+    exit 1
+  else
+    find . -name "*$ext" -print -delete
+  fi
+}
+
+main "$@"
