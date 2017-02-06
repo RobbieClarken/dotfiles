@@ -10,7 +10,7 @@ function main {
   fi
   case "$cmd" in
     clean)
-      docker rm -f $(docker ps -qa)
+      docker rm -f $(docker ps -qa) || true
       docker images | grep '<none>' | awk '{print $3}' | xargs docker rmi
       ;;
     l)
