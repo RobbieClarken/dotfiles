@@ -3,10 +3,9 @@
 export EDITOR=vim
 
 export HISTCONTROL=ignoreboth
-export HISTSIZE=10000
-export HISTFILESIZE=10000
+export HISTSIZE=100000
+export HISTFILESIZE=100000
 
-export TERM=xterm-256color # Needed for tmux on linux
 export CLICOLOR=1
 
 GIT_PROMPT_THEME=Custom
@@ -87,3 +86,5 @@ f8 () {
 if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
+
+alias ssh='TERM=xterm ssh'
