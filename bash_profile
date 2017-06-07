@@ -39,6 +39,7 @@ PATH="$HOME/.dotfiles/bin:$PATH"
 PATH=".git/safe/../../bin:$PATH"
 PATH="$PATH:/opt/miniconda3/bin"
 PATH="$GOPATH/bin:$PATH"
+PATH="$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64"
 export PATH
 
 if [ -f ~/.nvm/nvm.sh ]; then

@@ -1,2 +1,7 @@
 --python-kinds=-i
---exclude=.venv
+--exclude=.cache/*
+--exclude=.venv/*
+--exclude=.tox/*
+--exclude=node_modules/*
+--exclude=*.min.js
+--exclude=.ipynb_checkpoints
