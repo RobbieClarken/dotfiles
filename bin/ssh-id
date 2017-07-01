@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+main () {
+  host="$1"
+  ssh -G $host | grep '^hostname'
+}
+
+main "$@"
