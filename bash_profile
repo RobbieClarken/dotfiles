@@ -40,6 +40,7 @@ PATH=".git/safe/../../bin:$PATH"
 PATH="$PATH:/opt/miniconda3/bin"
 PATH="$GOPATH/bin:$PATH"
 PATH="$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64"
+PATH="$HOME/.local/bin:$PATH"
 export PATH
 
 if [ -f ~/.nvm/nvm.sh ]; then
@@ -55,6 +56,7 @@ fi
 alias ll='ls -laG'
 alias l='ll -h'
 alias grep='grep --color'
+alias rgf='rg --files -g'
 alias venv='source .venv/bin/activate'
 alias venv3='venv'
 alias cenv='python3 -m venv .venv && venv3 && python -m pip install -U pip'
@@ -76,7 +78,7 @@ g () {
 }
 
 ssh-copy-key () {
-  ssh "$1" "cat >> ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
+  ssh "$@" "cat >> ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
 }
 
 f8 () {
@@ -89,3 +91,10 @@ if [ -f ~/.bash_local ]; then
 fi
 
 alias ssh='TERM=xterm ssh'
+
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+
+if [ -f ~/.fzf.bash ]; then
+  source ~/.fzf.bash
+  export FZF_DEFAULT_COMMAND='rg --files'
+fi
