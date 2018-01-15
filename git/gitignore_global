@@ -86,3 +86,4 @@ Podfile.lock
 .idea
 .ctags
 tags
+.projections.json

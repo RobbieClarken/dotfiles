@@ -57,10 +57,10 @@ alias ll='ls -laG'
 alias l='ll -h'
 alias grep='grep --color'
 alias rgf='rg --files -g'
+alias gr=rg
+
 alias venv='source .venv/bin/activate'
-alias venv3='venv'
-alias cenv='python3 -m venv .venv && venv3 && python -m pip install -U pip'
-alias cenv3='cenv'
+alias cenv='python3 -m venv .venv && venv && python -m pip install -U pip'
 alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 
 alias dc='cd'
@@ -95,6 +95,21 @@ alias ssh='TERM=xterm ssh'
 alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 
 if [ -f ~/.fzf.bash ]; then
+
   source ~/.fzf.bash
-  export FZF_DEFAULT_COMMAND='rg --files'
+
+  export FZF_DEFAULT_COMMAND='fd --type f'
+  export FZF_CTRL_T_COMMAND='fd'
+  export FZF_ALT_C_COMMAND='fd --type d'
+  bind -x '"\C-x\C-t": fzf-file-widget'
+  bind '"\C-t": transpose-chars'
+
+  _fzf_compgen_path() {
+    fd --hidden --follow . "$1"
+  }
+
+  _fzf_compgen_dir() {
+    fd --type d --hidden --follow . "$1"
+  }
+
 fi
