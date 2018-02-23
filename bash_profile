@@ -58,6 +58,7 @@ alias l='ll -h'
 alias grep='grep --color'
 alias rgf='rg --files -g'
 alias gr=rg
+alias gri='rg -i'
 
 alias venv='source .venv/bin/activate'
 alias cenv='python3 -m venv .venv && venv && python -m pip install -U pip'
@@ -66,6 +67,9 @@ alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
+
+alias r='pipenv run'
+alias rp='pipenv run python'
 
 calc () { echo "scale=3;$@" | bc; }
 
@@ -90,16 +94,16 @@ if [ -f ~/.bash_local ]; then
   source ~/.bash_local
 fi
 
-alias ssh='TERM=xterm ssh'
-
 alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 
 if [ -f ~/.fzf.bash ]; then
 
   source ~/.fzf.bash
 
-  export FZF_DEFAULT_COMMAND='fd --type f'
-  export FZF_CTRL_T_COMMAND='fd'
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden'
+  export FZF_CTRL_T_COMMAND='fd --hidden'
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden'
+  export FZF_CTRL_T_COMMAND='fd --hidden'
   export FZF_ALT_C_COMMAND='fd --type d'
   bind -x '"\C-x\C-t": fzf-file-widget'
   bind '"\C-t": transpose-chars'
@@ -113,3 +117,6 @@ if [ -f ~/.fzf.bash ]; then
   }
 
 fi
+
+# Enable ctrl-s and ctrl-q
+stty -ixon -ixoff
