@@ -24,6 +24,8 @@ case "$os" in
       # Remap caps lock to ctrl
       setxkbmap -option ctrl:nocaps
     fi
+    alias pbcopy='xsel -bi'
+    alias pbpaste='xsel -bo'
   ;;
   darwin)
     export EPICS_HOST_ARCH=darwin-x86
@@ -37,10 +39,11 @@ PATH="$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH"
 PATH="$HOME/Developer/bin:$PATH"
 PATH="$HOME/.dotfiles/bin:$PATH"
 PATH=".git/safe/../../bin:$PATH"
-PATH="$PATH:/opt/miniconda3/bin"
+PATH="$PATH:/opt/miniconda/bin"
 PATH="$GOPATH/bin:$PATH"
 PATH="$PATH:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64"
 PATH="$HOME/.local/bin:$PATH"
+PATH="$HOME/.cargo/bin:$PATH"
 export PATH
 
 if [ -f ~/.nvm/nvm.sh ]; then
@@ -53,8 +56,9 @@ fi
 
 # Aliases and functions
 
-alias ll='ls -laG'
+alias ll='ls -lG'
 alias l='ll -h'
+alias la='ll -a'
 alias grep='grep --color'
 alias rgf='rg --files -g'
 alias gr=rg
