@@ -1,0 +1,4 @@
+*.min.js
+*.svg
+__snapshots__
+.git

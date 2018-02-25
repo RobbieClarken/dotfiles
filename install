@@ -48,8 +48,9 @@ update_tmux_conf () {
   ln -snf "$HOME/.tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
-update_other () {
+update_others () {
   ln -snf "$HOME/.dotfiles/ctags" "$HOME/.ctags"
+  ln -snf "$HOME/.dotfiles/ignore" "$HOME/.ignore"
 }
 
 main () {
@@ -57,6 +58,7 @@ main () {
   update_git
   update_vimrc
   update_tmux_conf
+  update_others
 }
 
 main "$@"
