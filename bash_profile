@@ -46,6 +46,8 @@ PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
 export PATH
 
+export MANPATH=/usr/local/share/man:$MANPATH
+
 if [ -f ~/.nvm/nvm.sh ]; then
   source ~/.nvm/nvm.sh
 fi
