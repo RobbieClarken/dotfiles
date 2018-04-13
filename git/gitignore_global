@@ -70,10 +70,12 @@ Pods/
 coverage/
 .coverage
 .tox/
+.pytest_cache/
 
 # Personal files #
 ##################
-TODO*
+TODO
+TODO.md
 *.ipynb
 *.ignore
 
