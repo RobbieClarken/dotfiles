@@ -8,6 +8,11 @@ update_bashrc () {
   ln -snf "$HOME/.dotfiles/git-prompt-colors.sh" "$HOME/.git-prompt-colors.sh"
 }
 
+install_base16 () {
+  mkdir -p "$HOME/.config"
+  ln -snf "$HOME/.dotfiles/base16-shell" "$HOME/.config/base16-shell"
+}
+
 update_git () {
   read -p "Keep git user settings for Robbie Clarken (y/n)? " keep_git_user
   ln -sf "$HOME/.dotfiles/git/gitconfig" "$HOME/.gitconfig"
@@ -39,6 +44,7 @@ update_others () {
 
 main () {
   update_bashrc
+  install_base16
   update_git
   update_vimrc
   update_tmux_conf
