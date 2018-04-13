@@ -1,46 +1,30 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 update_bashrc () {
-  os=$(uname -s | tr 'A-Z' 'a-z' | sed 's/_.*//')
-  case "$os" in
-    linux|cygwin)
-      bash_file="$HOME/.bashrc"
-    ;;
-    darwin)
-      bash_file="$HOME/.bash_profile"
-    ;;
-    *)
-      echo "Unrecognized operating system."
-      exit 1
-    ;;
-  esac
-  ln -sf "$HOME/.dotfiles/bash_profile" "$bash_file"
+  ln -snf "$HOME/.dotfiles/bash_profile" "$HOME/.bash_profile"
+  ln -snf "$HOME/.dotfiles/bashrc" "$HOME/.bashrc"
   ln -snf "$HOME/.dotfiles/git-prompt-colors.sh" "$HOME/.git-prompt-colors.sh"
 }
 
 update_git () {
-  if [[ -z "$keep_git_user" ]]
-  then
-    read -p "Keep git user settings for Robbie Clarken (y/n)? "
-    keep_git_user="$REPLY"
-  fi
+  read -p "Keep git user settings for Robbie Clarken (y/n)? " keep_git_user
   ln -sf "$HOME/.dotfiles/git/gitconfig" "$HOME/.gitconfig"
-  if [[ "$keep_git_user" != "y" ]]
-  then
+  if [[ "$keep_git_user" != "y" ]]; then
     git config --global --remove-section user
   fi
 }
 
 update_vimrc () {
-  if [[ -e "$HOME/.vim" ]]
-  then
+  if [[ -e "$HOME/.vim" ]]; then
     rm -rf "$HOME/.vim"
   fi
   ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
-  ln -sf "$HOME/.vim/vimrc" "$HOME/.vimrc"
-  vim +PlugInstall +qall
+  ln -snf "$HOME/.vim/vimrc" "$HOME/.vimrc"
+  if hash vim 2>/dev/null; then
+    vim +PlugInstall +qall
+  fi
 }
 
 update_tmux_conf () {
