@@ -32,7 +32,7 @@ if [ -f ~/.fzf.bash ]; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden'
   export FZF_CTRL_T_COMMAND='fd --hidden'
   export FZF_ALT_C_COMMAND='fd --type d'
-  bind -x '"\C-x\C-t": fzf-file-widget'
+  bind -x '"\C-q": fzf-file-widget'
   bind '"\C-t": transpose-chars'
 
   _fzf_compgen_path() {
