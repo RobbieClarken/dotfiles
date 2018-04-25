@@ -89,6 +89,13 @@ f8 () {
   if [ "$files" ]; then vim $files; fi
 }
 
+if hash __git_wrap__git_main 2>/dev/null; then
+  complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
+fi
+
+if hash _docker 2>/dev/null; then
+  complete -F _docker d
+fi
 
 if [ -f ~/.bashrc.local ]; then
   source ~/.bashrc.local
