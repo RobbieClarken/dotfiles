@@ -11,6 +11,7 @@ build/
 .eggs/
 *.egg-info/
 .cache/
+__pycache__/
 
 # Packages #
 ############

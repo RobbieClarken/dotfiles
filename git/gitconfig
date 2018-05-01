@@ -19,6 +19,7 @@
 	sml = submodule foreach git log --oneline --decorate --graph -n 1
 	cmm = !git cm -a
 	cmam = !git cma -a
+	cmi = commit -m 'Initial commit'
 [pull]
 	rebase = true
 [fetch]

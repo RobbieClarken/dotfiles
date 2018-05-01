@@ -39,7 +39,8 @@ update_tmux_conf () {
 
 update_others () {
   ln -snf "$HOME/.dotfiles/ctags" "$HOME/.ctags"
-  ln -snf "$HOME/.dotfiles/ignore" "$HOME/.ignore"
+  ln -snf "$HOME/.dotfiles/ignore" "$HOME/.rgignore"
+  ln -snf "$HOME/.dotfiles/ignore" "$HOME/.fdignore"
 }
 
 main () {
