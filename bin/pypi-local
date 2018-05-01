@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Make a copy of cached python packages and serve them using pypi-server.
+# Useful for creating virtual environments offline.
+
+set -eu
+
+readonly name=pypi-local
+readonly port=3030
+readonly cache_dirs=(
+  "${HOME}/Library/Caches/pip"
+  "${HOME}/Library/Caches/pipenv"
+)
+readonly data_dir="${HOME}/.config/$name"
+
+start () {
+  mkdir -p "$data_dir"
+  find "${cache_dirs[@]}" \
+    -type f \( -name '*.whl' -o -name '*.tar.gz' \) \
+    -exec rsync -t {} "$data_dir" \;
+  docker run -d --rm  --name $name -p $port:80 -v "$data_dir:/srv/pypi" codekoala/pypi >/dev/null
+  echo "Local PyPI available at http://localhost:$port/"
+}
+
+stop () {
+  docker rm -f $name >/dev/null
+}
+
+main () {
+  cmd=${1:-}
+  case "$cmd" in
+    start)
+      start
+      ;;
+    stop)
+      stop
+      ;;
+    *)
+      echo "Usage: $name (start|stop)" >&2
+      exit 1;
+  esac
+}
+
+main "$@"
