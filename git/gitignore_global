@@ -77,6 +77,7 @@ coverage/
 ##################
 *.ipynb
 *.ignore
+*.ignore.*
 
 # Local configuration #
 #######################

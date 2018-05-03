@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Browse through base16 themes
+
+set -e
+
+readonly BASE16_SHELL=$HOME/.config/base16-shell
+eval "$($BASE16_SHELL/profile_helper.sh)"
+
+main () {
+  local start=${1-1}
+  local scripts="${BASE16_SHELL}/scripts"
+  local names=($(ls -1 "${scripts}/base16-"*.sh | grep -oP '(?<=scripts/base16-)[^\.]+'))
+  local nameCount=${#names[@]}
+  local n=$start
+  local key name
+  echo "~~~ Use j/k to move to next/previous theme ~~~"
+  while true; do
+    name=${names[$(( $n - 1 ))]}
+    _base16 "$scripts/base16-$name.sh" $name
+    echo "$n/$nameCount: $name"
+    read -r -sn1 key
+    case $key in
+        j) n=$(( $n + 1 )) ;;
+        k) n=$(( $n - 1 )) ;;
+    esac
+    if (( $n < 1 )); then n=$nameCount; fi
+    if (( $n > $nameCount )); then n=1; fi
+  done
+}
+
+main "$@"
