@@ -31,6 +31,7 @@ esac
 
 export EPICS_BASE=/opt/epics/base
 export GOPATH="$HOME/Developer/Go"
+export N_PREFIX=$HOME/.local
 
 PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
 PATH="$EPICS_BASE/bin/$EPICS_HOST_ARCH:$PATH"
@@ -38,6 +39,7 @@ PATH="$HOME/Developer/bin:$PATH"
 PATH="$HOME/.dotfiles/bin:$PATH"
 PATH=".git/safe/../../bin:$PATH"
 PATH="$GOPATH/bin:$PATH"
+PATH="$N_PREFIX/n/bin:$PATH"
 PATH="/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"

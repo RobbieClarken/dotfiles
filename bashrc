@@ -8,21 +8,6 @@ if [ -f /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
 fi
 
-# nvm is slow to initialise so we defer doing so until it is needed
-# https://github.com/creationix/nvm/issues/1277#issuecomment-356309457
-if [ -s "$HOME/.nvm/nvm.sh" ] && [ ! "$(type -t __init_nvm)" = function ]; then
-  export NVM_DIR="$HOME/.nvm"
-  declare -a __node_commands=(nvm node npm npx yarn gulp grunt webpack)
-  __init_nvm () {
-    for cmd in "${__node_commands[@]}"; do unalias $cmd; done
-    source "$NVM_DIR"/nvm.sh
-    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-    unset __node_commands
-    unset -f __init_nvm
-  }
-  for cmd in "${__node_commands[@]}"; do alias $cmd='__init_nvm && '$cmd; done
-fi
-
 if [ -f ~/.fzf.bash ]; then
 
   source ~/.fzf.bash
