@@ -34,7 +34,6 @@ alias ll='ls -lG --color=auto --group-directories-first'
 alias l='ll -h'
 alias la='ll -a'
 alias grep='grep --color=auto'
-alias gr=rg
 alias gri='rg -i'
 
 alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
