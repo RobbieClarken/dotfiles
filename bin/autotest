@@ -1,0 +1,20 @@
+#!/bin/bash
+set -o errexit -o nounset
+
+
+main () {
+  local command=( "$@" )
+  while true; do
+    {
+      fswatch . -1 \
+          | grep -E '\.py$' \
+          | grep -qEv '/\.|[0-9]/' \
+        && "${command[@]}"
+    } || {
+      (( $? > 127 )) && exit  # exit on signals like ctrl-c
+    }
+  done
+}
+
+
+main "$@"
