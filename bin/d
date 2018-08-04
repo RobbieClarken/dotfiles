@@ -1,46 +1,45 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
-function main {
-  cmd="$1"; shift || :
+main () {
+  local cmd="$1"; shift || :
   if [ "$cmd" == "" ]; then
     docker ps
-    return
+    exit
   fi
   case "$cmd" in
     clean)
-      docker rm -f $(docker ps -qa) || true
+      mapfile -t containers < <(docker ps -qa)
+      if (( ${#containers[@]} > 0 )); then
+        docker rm -f "${containers[@]}"
+      fi
       docker images | grep '<none>' | awk '{print $3}' | xargs docker rmi
       ;;
     l)
-      docker logs -f $@
+      docker logs -f "$@"
       ;;
     e)
-      container="$1"; shift
-      if [[ "$@" != "" ]]; then
-        cmd="$@"
-      else
-        cmd="bash"
-      fi
-      docker exec -it $container $cmd
+      local container="$1"; shift
+      local cmd="${*-bash}"
+      docker exec -it "$container" "$cmd"
       ;;
     i)
-      container="$1"
-      key="$2"
+      local container="$1"
+      local key="$2"
       if [ "$key" == "" ]; then
-        docker inspect $container | jq .
+        docker inspect "$container" | jq .
       else
-        docker inspect $container | jq '.[]' | find-by-key $key
+        docker inspect "$container" | jq '.[]' | find-by-key "$key"
       fi
       ;;
     up|down)
-      docker-compose $cmd $@
+      docker-compose "$cmd" "$@"
       ;;
     *)
-      docker $cmd $@
+      docker "$cmd" "$@"
       ;;
   esac
 }
 
-main $@
+main "$@"

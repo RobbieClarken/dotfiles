@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Make a copy of cached python packages and serve them using pypi-server.
 # Useful for creating virtual environments offline.

@@ -14,7 +14,7 @@ install_base16 () {
 }
 
 update_git () {
-  read -p "Keep git user settings for Robbie Clarken (y/n)? " keep_git_user
+  read -rp "Keep git user settings for Robbie Clarken (y/n)? " keep_git_user
   ln -sf "$HOME/.dotfiles/git/gitconfig" "$HOME/.gitconfig"
   if [[ "$keep_git_user" != "y" ]]; then
     git config --global --remove-section user

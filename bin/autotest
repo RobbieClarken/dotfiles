@@ -1,14 +1,13 @@
-#!/bin/bash
-set -o errexit -o nounset
+#!/usr/bin/env bash
 
+set -o errexit -o nounset
 
 main () {
   local command=( "$@" )
   while true; do
     {
       fswatch . -1 \
-          | grep -E '\.py$' \
-          | grep -qEv '/\.|[0-9]/' \
+          | grep -qE '\.py$' \
         && "${command[@]}"
     } || {
       (( $? > 127 )) && exit  # exit on signals like ctrl-c

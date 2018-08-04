@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+#!/usr/bin/env bash
+
 # This script runs a given command over a range of Git revisions. Note that it
 # will check past revisions out! Exercise caution if there are important
 # untracked files in your working tree.
@@ -8,7 +8,7 @@
 #     https://github.com/garybernhardt/dotfiles
 #
 # Example usage:
-#     $ run-command-on-git-revisions origin/master master 'python runtests.py'
+#   $ run-command-on-git-revisions origin/master master 'python runtests.py'
 
 set -e
 
