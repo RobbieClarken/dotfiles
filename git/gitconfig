@@ -6,7 +6,6 @@
 [core]
 	excludesfile = ~/.dotfiles/git/gitignore_global
 [alias]
-	i = !git init && git commit --allow-empty -m 'Initialise repository'
 	l = log --oneline --decorate --all --graph
 	sla = log --oneline --decorate --graph --all
 	glog = log -E -i --grep
