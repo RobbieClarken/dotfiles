@@ -7,18 +7,14 @@
 	excludesfile = ~/.dotfiles/git/gitignore_global
 [alias]
 	l = log --oneline --decorate --all --graph
-	sla = log --oneline --decorate --graph --all
-	glog = log -E -i --grep
+	ll = log --oneline --decorate --graph
 	df = diff --word-diff --color-words
 	dfc = diff --word-diff --color-words --cached
 	co = checkout
 	cm = commit -v
 	cma = commit -v --amend
 	pf = push --force-with-lease
-	dc = diff --word-diff --color-words --cached
 	sml = submodule foreach git log --oneline --decorate --graph -n 1
-	cmm = !git cm -a
-	cmam = !git cma -a
 	cmi = commit -m 'Initial commit'
 [pull]
 	rebase = true

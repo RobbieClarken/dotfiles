@@ -66,6 +66,11 @@ g () {
   fi
 }
 
+tm () {
+  # if user leaves tmux by exiting bash automatically reattach to next session
+  while tmux attach | { read -r msg; [[ $msg == *exited* ]]; }; do :; done
+}
+
 pipvenv () {
   PIPENV_VENV_IN_PROJECT=1 pipenv "$@"
 }
