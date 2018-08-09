@@ -67,6 +67,7 @@ g () {
 }
 
 tm () {
+  tmux "$@"
   # if user leaves tmux by exiting bash automatically reattach to next session
   while tmux attach | { read -r msg; [[ $msg == *exited* ]]; }; do :; done
 }
