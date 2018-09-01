@@ -13,6 +13,7 @@
 	co = checkout
 	cm = commit -v
 	cma = commit -v --amend
+	ph = push -u origin HEAD
 	pf = push --force-with-lease
 	sml = submodule foreach git log --oneline --decorate --graph -n 1
 	cmi = commit -m 'Initial commit'

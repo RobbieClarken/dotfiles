@@ -47,6 +47,12 @@ alias vmi='vim'
 alias r='pipenv run'
 alias rp='pipenv run python'
 
+alias k=kubectl
+alias kctx=kubectx
+alias kns=kubens
+alias ktail=kubetail
+
+
 case "$(uname)" in
   Darwin*)
     alias chrome="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -87,6 +93,14 @@ fi
 
 if hash _docker 2>/dev/null; then
   complete -F _docker d
+fi
+
+if hash __start_kubectl 2>/dev/null; then
+  complete -o default -F __start_kubectl k
+fi
+
+if hash _kubetail 2>/dev/null; then
+  complete -F _kubetail ktail
 fi
 
 if [ -f ~/.bashrc.local ]; then
