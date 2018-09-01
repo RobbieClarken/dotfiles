@@ -47,11 +47,10 @@ alias vmi='vim'
 alias r='pipenv run'
 alias rp='pipenv run python'
 
-alias k=kubectl
-alias kctx=kubectx
+alias kx=kubectx
 alias kns=kubens
 alias ktail=kubetail
-
+alias kga='kubectl get all --all-namespaces'
 
 case "$(uname)" in
   Darwin*)
@@ -69,6 +68,14 @@ g () {
     git "$@"
   else
     git status --short --branch
+  fi
+}
+
+k () {
+  if (( $# > 0 )); then
+    kubectl "$@"
+  else
+    kubectl get all
   fi
 }
 
@@ -97,6 +104,10 @@ fi
 
 if hash __start_kubectl 2>/dev/null; then
   complete -o default -F __start_kubectl k
+fi
+
+if hash _kube_contexts 2>/dev/null; then
+  complete -F _kube_contexts kx
 fi
 
 if hash _kubetail 2>/dev/null; then

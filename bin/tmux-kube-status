@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -eu
+if hash kubectl 2>/dev/null; then
+  kube_ctx=$(kubectl config view -o=jsonpath='{.current-context}')
+  kube_ns=$(kubectl config view -o=jsonpath="{.contexts[?(@.name=='$kube_ctx')].context.namespace}")
+  echo "$kube_ctx/$kube_ns"
+fi
