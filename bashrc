@@ -49,8 +49,50 @@ alias rp='pipenv run python'
 
 alias kx=kubectx
 alias kns=kubens
+alias knss='kubens kube-system'
+alias knsd='kubens default'
 alias ktail=kubetail
-alias kga='kubectl get all --all-namespaces'
+alias kga='kubectl get --all-namespaces daemonset,ingress,all'
+
+kgaa () {
+  local -r resource_types=(
+    apiservices
+    certificatesigningrequests
+    clusterrolebindings
+    clusterroles
+    configmaps
+    controllerrevisions
+    cronjobs
+    customresourcedefinition
+    daemonsets
+    deployments
+    endpoints
+    horizontalpodautoscalers
+    ingresses
+    jobs
+    limitranges
+    namespaces
+    networkpolicies
+    nodes
+    persistentvolumeclaims
+    persistentvolumes
+    poddisruptionbudget
+    pods
+    podsecuritypolicies
+    podtemplates
+    replicasets
+    replicationcontrollers
+    resourcequotas
+    rolebindings
+    roles
+    secrets
+    serviceaccounts
+    services
+    statefulsets
+    storageclasses
+  )
+  kubectl get --all-namespaces "$(echo "${resource_types[*]}" | tr ' ' ,)" "$@"
+}
 
 case "$(uname)" in
   Darwin*)
@@ -75,7 +117,7 @@ k () {
   if (( $# > 0 )); then
     kubectl "$@"
   else
-    kubectl get all
+    kubectl get daemonset,ingress,all
   fi
 }
 
@@ -93,6 +135,7 @@ f8 () {
   mapfile -t files < <(flake8 -q)
   if (( ${#files[@]} > 0 )); then vim "${files[@]}"; fi
 }
+
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
