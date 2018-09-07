@@ -136,6 +136,11 @@ f8 () {
   if (( ${#files[@]} > 0 )); then vim "${files[@]}"; fi
 }
 
+mkcd () {
+  mkdir -p "$1"
+  # shellcheck disable=SC2164
+  cd "$1"
+}
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
