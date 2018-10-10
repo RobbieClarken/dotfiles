@@ -44,6 +44,8 @@ alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
 
+alias pwdc='echo -n $PWD | pbcopy'
+
 alias r='pipenv run'
 alias rp='pipenv run python'
 
