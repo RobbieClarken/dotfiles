@@ -1,19 +1,33 @@
 module.exports = {
   namedExports: {
+    '@angular/animations': [
+      'animate',
+      'animateChild',
+      'group',
+      'query',
+      'style',
+      'transition',
+      'trigger',
+    ],
     '@angular/core': [
       'AfterViewInit',
       'Component',
       'ContentChild',
+      'DebugElement',
       'Directive',
       'EventEmitter',
       'Host',
       'HostBinding',
+      'HostListener',
       'Injectable',
+      'Injector',
       'Input',
       'NgModule',
       'OnChanges',
+      'OnInit',
       'Optional',
       'Output',
+      'Provider',
       'SimpleChanges',
       'TemplateRef',
       'ViewChild',
@@ -23,7 +37,9 @@ module.exports = {
       'async',
       'ComponentFixture',
       'fakeAsync',
+      'inject',
       'TestBed',
+      'tick',
     ],
     '@angular/common': [
       'CommonModule',
@@ -38,6 +54,41 @@ module.exports = {
     ],
     '@angular/platform-browser': [
       'BrowserModule',
+    ],
+    '@angular/common/http': [
+      'HTTP_INTERCEPTORS',
+      'HttpClient',
+      'HttpClientModule',
+      'HttpErrorResponse',
+    ],
+    '@angular/common/http/testing': [
+      'HttpClientTestingModule',
+      'HttpTestingController',
+    ],
+    '@angular/platform-browser/animations': [
+      'BrowserAnimationsModule',
+      'NoopAnimationsModule',
+    ],
+    '@angular/router': [
+      'ActivatedRoute',
+      'ActivatedRouteSnapshot',
+      'CanActivate',
+      'CanDeactivate',
+      'ParamMap',
+      'Router',
+      'RouterModule',
+      'RouterStateSnapshot',
+      'Routes',
+    ],
+    'rxjs/Observable': [
+      'Observable',
+    ],
+    'rxjs/Subscription': [
+      'ISubscription',
+    ],
+    'rxjs/operators': [
+      'switchMap',
+      'map',
     ],
   },
 }

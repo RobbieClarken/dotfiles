@@ -20,9 +20,14 @@ main () {
       docker logs -f "$@"
       ;;
     e)
+      if [[ $1 == "-u" ]]; then
+        local user_args="$1 $2"; shift 2
+      else
+        local user_args=""
+      fi
       local container="$1"; shift
       local cmd="${*-bash}"
-      docker exec -it "$container" "$cmd"
+      docker exec -it $user_args "$container" "$cmd"
       ;;
     i)
       local container="$1"
