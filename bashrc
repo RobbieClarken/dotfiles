@@ -129,6 +129,15 @@ tm () {
   while tmux attach | { read -r msg; [[ $msg == *exited* ]]; }; do :; done
 }
 
+tox () {
+  # require confirmation before recreating a tox environment to avoid accidentally doing
+  # so when recalling commands from history
+  if [[ $* =~ (^| )-[a-zA-Z]*r ]]; then
+    read -rp 'tox env will be recreated. Hit enter to continue or ctrl-c to cancel. '
+  fi
+  $(type -fp tox) "$@"
+}
+
 pipvenv () {
   PIPENV_VENV_IN_PROJECT=1 pipenv "$@"
 }

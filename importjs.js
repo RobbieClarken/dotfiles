@@ -10,6 +10,7 @@ module.exports = {
       'trigger',
     ],
     '@angular/core': [
+      'AfterContentInit',
       'AfterViewInit',
       'Component',
       'ContentChild',
@@ -69,6 +70,9 @@ module.exports = {
       'BrowserAnimationsModule',
       'NoopAnimationsModule',
     ],
+    '@angular/platform-browser-dynamic/testing': [
+      'BrowserDynamicTestingModule',
+    ],
     '@angular/router': [
       'ActivatedRoute',
       'ActivatedRouteSnapshot',
@@ -80,6 +84,9 @@ module.exports = {
       'RouterStateSnapshot',
       'Routes',
     ],
+    '@ng-bootstrap/ng-bootstrap': [
+      'NgbActiveModal',
+    ],
     'rxjs/Observable': [
       'Observable',
     ],
@@ -87,8 +94,9 @@ module.exports = {
       'ISubscription',
     ],
     'rxjs/operators': [
-      'switchMap',
       'map',
+      'switchMap',
     ],
   },
+  sortImports: false,
 }
