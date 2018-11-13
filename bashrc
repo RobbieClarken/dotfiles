@@ -153,6 +153,12 @@ mkcd () {
   cd "$1"
 }
 
+cm () {
+  git add .
+  git status
+  git commit -m "$*"
+}
+
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
 fi

@@ -4,3 +4,4 @@ __snapshots__
 .git
 Temp
 node_modules
+*.swp
