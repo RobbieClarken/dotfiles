@@ -30,6 +30,10 @@ if [[ -f ~/.fzf.bash ]]; then
 
 fi
 
+# enable gpg to prompt for password
+GPG_TTY=$(tty)
+export GPG_TTY
+
 # Aliases and functions
 
 alias ll='ls -lG --color=auto --group-directories-first'
