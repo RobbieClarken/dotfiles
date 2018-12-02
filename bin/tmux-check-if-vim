@@ -4,9 +4,18 @@ pane_tty=$1
 
 if [[ $(uname) = Darwin ]]; then
 
+  # The awk regex below...
+  # * should match:
+  #     x 1 vim
+  #     x 1 vim file.txt
+  #     x 1 /usr/local/bin/vim
+  #     x 1 /usr/local/bin/vim file.txt
+  # * should not match:
+  #     x 1 /Users/user/.dotfiles/vim/plugged/LanguageClient-neovim/bin/languageclient
+
   ps -o state= \
      -p "$(
-       pstree "$(ps -o pid= -t "$pane_tty" | head -1)" | awk '/\y(vim|view)\y/{ print $2 }'
+       pstree "$(ps -o pid= -t "$pane_tty" | head -1)" | awk '/\y(vim|view)(\s|$)/{ print $2 }'
      )" 2>/dev/null \
        | grep -qE '^[^TXZ]'
 
