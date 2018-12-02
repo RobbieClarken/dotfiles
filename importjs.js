@@ -11,11 +11,15 @@ module.exports = {
     ],
     '@angular/core': [
       'AfterContentInit',
+      'AfterViewChecked',
       'AfterViewInit',
+      'ChangeDetectorRef',
       'Component',
       'ContentChild',
       'DebugElement',
       'Directive',
+      'DoCheck',
+      'ElementRef',
       'EventEmitter',
       'Host',
       'HostBinding',
@@ -23,6 +27,7 @@ module.exports = {
       'Injectable',
       'Injector',
       'Input',
+      'IterableDiffers',
       'NgModule',
       'OnChanges',
       'OnInit',
@@ -33,6 +38,7 @@ module.exports = {
       'TemplateRef',
       'ViewChild',
       'ViewContainerRef',
+      'ViewEncapsulation',
     ],
     '@angular/core/testing': [
       'async',
@@ -55,6 +61,7 @@ module.exports = {
     ],
     '@angular/platform-browser': [
       'BrowserModule',
+      'By',
     ],
     '@angular/common/http': [
       'HTTP_INTERCEPTORS',
@@ -79,10 +86,12 @@ module.exports = {
       'CanActivate',
       'CanDeactivate',
       'ParamMap',
+      'Resolve',
       'Router',
       'RouterModule',
       'RouterStateSnapshot',
       'Routes',
+      'UrlSegment',
     ],
     '@ng-bootstrap/ng-bootstrap': [
       'NgbActiveModal',

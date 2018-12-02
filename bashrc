@@ -167,6 +167,10 @@ if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
 fi
 
+if hash _rg 2>/dev/null; then
+  complete -o bashdefault -o default -F _rg gr
+fi
+
 if hash _docker 2>/dev/null; then
   complete -F _docker d
 fi
