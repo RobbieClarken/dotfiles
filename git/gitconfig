@@ -6,10 +6,8 @@
 [core]
 	excludesfile = ~/.dotfiles/git/gitignore_global
 [alias]
-	l = log --oneline --decorate --all --graph
-	lg = log --graph --abbrev-commit --decorate --date=short --format=format:'%C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all --date-order
-	lgl = log --abbrev-commit --decorate --date=short --format=format:'%C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --date-order
-	ll = log --oneline --decorate --graph
+	ll = log --date=short --format=format:'%C(auto)%h%C(reset) %C(cyan)%ad%C(reset) %C(green)(%ar)%C(reset)%C(auto)%d%C(reset) %s - %C(yellow)%an%C(reset)'
+	l = !git ll --all --graph
 	df = diff --word-diff --color-words
 	dfc = diff --word-diff --color-words --cached
 	co = checkout
