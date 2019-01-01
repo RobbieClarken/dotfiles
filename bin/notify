@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -eu
+osascript -e "display notification \"$*\" with title \"Alert\""
