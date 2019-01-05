@@ -1,18 +1,34 @@
 #!/usr/bin/env bash
+#
+# Run tests whenever any file tracked by git is modified.
+#
+# Usage: autotest TEST_COMMAND
+#
+# For example:
+#     autotest pytest -x --ff
 
 set -o errexit -o nounset
 
 main () {
-  local command=( "$@" )
-  while true; do
-    {
-      fswatch . -1 \
-          | grep -qE '\.py$' \
-        && "${command[@]}"
-    } || {
-      (( $? > 127 )) && exit  # exit on signals like ctrl-c
-    }
-  done
+  local command
+  if (( $# > 0 )); then
+    command=( "$@" )
+  else
+    guess_cmd command
+  fi
+  git ls-files | entr "${command[@]}"
+}
+
+
+guess_cmd () {
+  local -n cmd=$1
+  if [[ -e Cargo.toml ]]; then
+    # shellcheck disable=SC2034
+    cmd=(cargo test)
+  else
+    echo >/dev/stderr "cannot determine test command"
+    exit 1
+  fi
 }
 
 
