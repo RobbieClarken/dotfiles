@@ -90,3 +90,4 @@ Podfile.lock
 .ctags
 tags
 .projections.json
+.vscode/

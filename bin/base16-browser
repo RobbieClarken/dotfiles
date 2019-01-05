@@ -5,19 +5,26 @@
 set -e
 
 readonly BASE16_SHELL=$HOME/.config/base16-shell
+readonly BASE16_SCRIPTS="${BASE16_SHELL}/scripts"
+readonly BASE16_LINK=$HOME/.base16_theme
+mapfile -t NAMES < <(
+  echo "${BASE16_SCRIPTS}/base16-"*.sh | grep -oP '(?<=scripts/base16-)[^\.]+'
+)
 eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 main () {
-  local start=${1-1}
-  local scripts="${BASE16_SHELL}/scripts"
-  mapfile -t names < <(echo "${scripts}/base16-"*.sh | grep -oP '(?<=scripts/base16-)[^\.]+')
-  local nameCount=${#names[@]}
-  local n=$start
-  local key name
+  local start n nameCount key name nameCount
+  if (( $# >= 1 )); then
+    start=$1
+  else
+    start=$(current_theme_number)
+  fi
+  nameCount=${#NAMES[@]}
+  n=$start
   echo "~~~ Use j/k to move to next/previous theme ~~~"
   while true; do
-    name=${names[$(( n - 1 ))]}
-    _base16 "$scripts/base16-$name.sh" "$name"
+    name=${NAMES[$(( n - 1 ))]}
+    _base16 "$BASE16_SCRIPTS/base16-$name.sh" "$name"
     echo "$n/$nameCount: $name"
     read -r -sn1 key
     case $key in
@@ -27,6 +34,22 @@ main () {
     if (( n < 1 )); then n=$nameCount; fi
     if (( n > nameCount )); then n=1; fi
   done
+}
+
+current_theme_number () {
+  local current i
+  if ! [[ -L "$BASE16_LINK" ]]; then
+    echo 1
+    return
+  fi
+  current=$(basename "$(readlink "$BASE16_LINK")" | sed -E 's/^base16-(.*).sh$/\1/')
+  for ((i=1; i<=${#NAMES[@]}; i++)); do
+    if [[ $current == "${NAMES[i]}" ]]; then
+      echo $((i+1))
+      return
+    fi
+  done
+  echo 1
 }
 
 main "$@"
