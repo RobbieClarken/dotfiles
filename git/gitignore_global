@@ -11,6 +11,7 @@
 *.egg-info/
 .cache/
 __pycache__/
+.docker/
 
 # Packages #
 ############

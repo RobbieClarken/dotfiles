@@ -136,6 +136,10 @@ tm () {
 tox () {
   # require confirmation before recreating a tox environment to avoid accidentally doing
   # so when recalling commands from history
+  if [[ -n ${VIRTUAL_ENV:-} ]]; then
+    echo "virtual env detected: aborting."
+    exit 1
+  fi
   if [[ $* =~ (^| )-[a-zA-Z]*r ]]; then
     read -rp 'tox env will be recreated. Hit enter to continue or ctrl-c to cancel. '
   fi
@@ -162,6 +166,10 @@ cm () {
   git status
   git commit -m "$*"
 }
+
+vwhich () { vim "$(command -v "$@")"; }
+complete -c vwhich
+
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
