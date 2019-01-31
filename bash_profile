@@ -25,6 +25,7 @@ PATH=$N_PREFIX/bin:$PATH
 PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH
 PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
+PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
 export PATH

@@ -52,6 +52,7 @@ module.exports = {
       'CommonModule',
     ],
     '@angular/forms': [
+      'AbstractControl',
       'FormControl',
       'FormGroup',
       'FormsModule',

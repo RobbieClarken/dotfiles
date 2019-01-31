@@ -48,10 +48,15 @@ alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
 
-alias pwdc='echo -n $PWD | pbcopy'
-
-alias r='pipenv run'
-alias rp='pipenv run python'
+pwdc () {
+  if (( $# > 0 )); then
+    the_path=$PWD/$1
+  else
+    the_path=$PWD
+  fi
+  echo $the_path
+  echo -n "$the_path" | pbcopy
+}
 
 alias kx=kubectx
 alias kns=kubens
@@ -138,7 +143,7 @@ tox () {
   # so when recalling commands from history
   if [[ -n ${VIRTUAL_ENV:-} ]]; then
     echo "virtual env detected: aborting."
-    exit 1
+    return 1
   fi
   if [[ $* =~ (^| )-[a-zA-Z]*r ]]; then
     read -rp 'tox env will be recreated. Hit enter to continue or ctrl-c to cancel. '

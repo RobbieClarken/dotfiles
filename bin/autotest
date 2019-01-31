@@ -22,9 +22,13 @@ main () {
 
 guess_cmd () {
   local -n cmd=$1
+  # shellcheck disable=SC2034
   if [[ -e Cargo.toml ]]; then
-    # shellcheck disable=SC2034
     cmd=(cargo test)
+  elif [[ -e tox.ini ]]; then
+    cmd=(tox -e py36 -- -x --ff --no-cov -W ignore)
+  elif [[ -e pyproject.toml ]]; then
+    cmd=(poetry run pytest tests)
   else
     echo >/dev/stderr "cannot determine test command"
     exit 1
