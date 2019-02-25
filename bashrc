@@ -54,7 +54,7 @@ pwdc () {
   else
     the_path=$PWD
   fi
-  echo $the_path
+  echo "$the_path"
   echo -n "$the_path" | pbcopy
 }
 

@@ -28,6 +28,7 @@ PATH=$HOME/.cargo/bin:$PATH
 PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
+PATH=/usr/local/opt/gnu-getopt/bin:$PATH
 export PATH
 
 MANPATH=/usr/local/share/man:$MANPATH
@@ -38,6 +39,8 @@ export MANPATH
 
 # Run pipenv shell in fancy mode so we get the right version of bash
 export PIPENV_SHELL_FANCY=1
+
+export HOMEBREW_NO_INSTALL_CLEANUP=1
 
 if [[ $(uname) == "Linux" ]] && hash setxkbmap 2>/dev/null; then
   # Remap caps lock to ctrl

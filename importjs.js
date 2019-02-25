@@ -94,6 +94,9 @@ module.exports = {
       'Routes',
       'UrlSegment',
     ],
+    '@angular/router/testing': [
+      'RouterTestingModule',
+    ],
     '@ng-bootstrap/ng-bootstrap': [
       'NgbActiveModal',
     ],

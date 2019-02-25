@@ -26,7 +26,7 @@ guess_cmd () {
   if [[ -e Cargo.toml ]]; then
     cmd=(cargo test)
   elif [[ -e tox.ini ]]; then
-    cmd=(tox -e py36 -- -x --ff --no-cov -W ignore)
+    cmd=(tox -e py36 -- -x --ff -W ignore)
   elif [[ -e pyproject.toml ]]; then
     cmd=(poetry run pytest tests)
   else

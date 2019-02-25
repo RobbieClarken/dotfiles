@@ -25,5 +25,7 @@
 	ff = only
 [push]
 	default = simple
+[diff "sopsdiffer"]
+	textconv = sops -d
 [url "https://"]
-  insteadOf = git://
+	insteadOf = git://
