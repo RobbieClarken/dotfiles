@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -eu
+
+main () {
+  confirm "Are your main branches named 'master' and 'developer'? [y/N] " || exit 0
+  delete_local_merged_braches
+  delete_remote_merged_branches
+}
+
+
+confirm () {
+  read -rp "$1" response
+  if [[ $response != "y" ]]; then
+    return 1
+  fi
+}
+
+
+delete_local_merged_braches () {
+  branches=$(
+    git branch --format='%(refname:short)' --merged \
+      | grep -Ev '(master|development)' \
+      || true
+  )
+  echo
+  if [[ $branches == "" ]]; then
+    echo "No local branches to delete"
+    return
+  fi
+  echo "The following local branches will be deleted:"
+  echo "$branches"
+  confirm "Do you wish to continue? [y/N] " || return 0
+  echo "$branches" | xargs git branch --delete
+}
+
+
+delete_remote_merged_branches () {
+  branches=$(
+    git branch --remote --format='%(refname:short)' --merged \
+      | grep -Ev '(development|master)' \
+      || true
+  )
+  echo
+  if [[ $branches == "" ]]; then
+    echo "No remote branches to delete"
+    return
+  fi
+  echo "The following remote branches will be deleted:"
+  echo "$branches"
+  confirm "Do you wish to continue? [y/N] " || return 0
+  echo "$branches" | while read -r branch; do
+    # shellcheck disable=SC2086
+    git push --delete ${branch/\// }
+  done
+}
+
+
+main "$@"
