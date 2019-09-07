@@ -21,7 +21,6 @@ PATH=$HOME/Developer/bin:$PATH
 PATH=$HOME/.dotfiles/bin:$PATH
 PATH=.git/safe/../../bin:$PATH
 PATH=$GOPATH/bin:$PATH
-PATH=$N_PREFIX/bin:$PATH
 PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH
 PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
@@ -29,6 +28,7 @@ PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
 PATH=/usr/local/opt/gnu-getopt/bin:$PATH
+PATH=$N_PREFIX/bin:$PATH
 export PATH
 
 MANPATH=/usr/local/share/man:$MANPATH
