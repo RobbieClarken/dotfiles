@@ -9,6 +9,10 @@ if [ -f /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
 fi
 
+if [ -f /usr/local/etc/profile.d/z.sh ]; then
+  source /usr/local/etc/profile.d/z.sh
+fi
+
 if [[ -f ~/.fzf.bash ]]; then
 
   # shellcheck source=.fzf.bash
@@ -39,8 +43,12 @@ export GPG_TTY
 alias ll='ls -lG --color=auto --group-directories-first'
 alias l='ll -h'
 alias la='ll -a'
+alias lr='ls -lG --color=auto -rt'
 alias grep='grep --color=auto'
 alias gri='rg -i'
+alias tmp='pushd "$(mktemp -d)"'
+alias pytmp='pushd "$(mktemp -d)" && python3 -m venv .venv && source .venv/bin/activate'
+
 
 alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 
@@ -167,7 +175,7 @@ mkcd () {
 }
 
 cm () {
-  git add .
+  git add --all
   git status
   git commit -m "$*"
 }
