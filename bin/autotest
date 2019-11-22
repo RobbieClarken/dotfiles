@@ -16,7 +16,7 @@ main () {
   else
     guess_cmd command
   fi
-  git ls-files | entr "${command[@]}"
+  git ls-files | entr -r "${command[@]}"
 }
 
 
@@ -26,9 +26,11 @@ guess_cmd () {
   if [[ -e Cargo.toml ]]; then
     cmd=(cargo test)
   elif [[ -e tox.ini ]]; then
-    cmd=(tox -e py36 -- -x --ff -W ignore)
+    cmd=(tox -e nolint -- -x --ff -W ignore)
   elif [[ -e pyproject.toml ]]; then
     cmd=(poetry run pytest tests)
+  elif [[ -e go.mod ]]; then
+    cmd=(gotestsum --format short-verbose)
   else
     echo >/dev/stderr "cannot determine test command"
     exit 1
