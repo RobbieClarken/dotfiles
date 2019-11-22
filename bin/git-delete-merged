@@ -18,7 +18,7 @@ confirm () {
 
 delete_local_merged_braches () {
   branches=$(
-    git branch --format='%(refname:short)' --merged \
+    git branch --format='%(refname:short)' --merged origin/master \
       | grep -Ev '(master|development)' \
       || true
   )
@@ -36,8 +36,8 @@ delete_local_merged_braches () {
 
 delete_remote_merged_branches () {
   branches=$(
-    git branch --remote --format='%(refname:short)' --merged \
-      | grep -Ev '(development|master)' \
+    git branch --remote --format='%(refname:short)' --merged origin/master \
+      | grep -Ev '(development|master|HEAD)' \
       || true
   )
   echo

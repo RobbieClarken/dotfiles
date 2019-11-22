@@ -3,7 +3,7 @@ set -eu
 
 main () {
   local schematic="$1"; shift
-  npx ng generate "$schematic" --flat --inline-style --inline-template --spec=false "$@"
+  npx ng generate "$schematic" --flat --inline-style --inline-template --skipTests "$@"
 }
 
 main "$@"
