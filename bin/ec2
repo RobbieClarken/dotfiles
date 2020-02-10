@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -eu
+
+readonly AMI=${TEMP_EC2_AMI:-ami-0b8b10b5bf11f3a22}
+readonly SSH_KEY=${TEMP_EC2_SSH_KEY:-robbie-kj}
+readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-01e7bfb66c0bddfc2}
+
+do_start() {
+  aws ec2 run-instances \
+    --image-id "$AMI" \
+    --count 1 \
+    --instance-type t2.micro \
+    --key-name "$SSH_KEY" \
+    --security-group-ids "$SECURITY_GROUP" \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=temp}]' \
+    --user-data "
+#!/usr/bin/env bash
+sudo yum -y update
+sudo yum -y install nmap
+    "
+}
+
+do_ssh() {
+  until ip=$(instance | jq -er '.NetworkInterfaces[0].Association.PublicIp'); do
+    echo "waiting for public ip..."
+    sleep 10
+  done
+  exec ssh -i ~/.ssh/id_aws_kj "ec2-user@$ip"
+}
+
+do_stop() {
+  id=$(instance | jq -r '.InstanceId')
+  aws ec2 terminate-instances --instance-ids "$id"
+}
+
+instance() {
+  aws ec2 describe-instances \
+    --filters Name=tag:Name,Values=temp \
+  | jq '.Reservations[0]|.Instances[0]'
+}
+
+main() {
+  if (( $# < 1 )) || ! hash "do_$1" 2>/dev/null; then
+      echo "Usage: ec2 (start|ssh|stop)"
+      exit 1
+  fi
+  "do_$1"
+}
+
+main "$@"
