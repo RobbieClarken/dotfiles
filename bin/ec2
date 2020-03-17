@@ -4,6 +4,7 @@ set -eu
 readonly AMI=${TEMP_EC2_AMI:-ami-0b8b10b5bf11f3a22}
 readonly SSH_KEY=${TEMP_EC2_SSH_KEY:-robbie-kj}
 readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-01e7bfb66c0bddfc2}
+readonly SSH_KEY_FILE=$HOME/.ssh/id_temp_ec2
 
 do_start() {
   aws ec2 run-instances \
@@ -21,11 +22,19 @@ sudo yum -y install nmap
 }
 
 do_ssh() {
+  exec ssh -i "$SSH_KEY_FILE" "ec2-user@$(do_ip)"
+}
+
+do_scp() {
+  exec scp -i "$SSH_KEY_FILE" "ec2-user@$(do_ip):$1" "$2"
+}
+
+do_ip() {
   until ip=$(instance | jq -er '.NetworkInterfaces[0].Association.PublicIp'); do
-    echo "waiting for public ip..."
+    echo "waiting for public ip..." >/dev/stderr
     sleep 10
   done
-  exec ssh -i ~/.ssh/id_aws_kj "ec2-user@$ip"
+  echo "$ip"
 }
 
 do_stop() {
@@ -41,10 +50,11 @@ instance() {
 
 main() {
   if (( $# < 1 )) || ! hash "do_$1" 2>/dev/null; then
-      echo "Usage: ec2 (start|ssh|stop)"
+      echo "Usage: ec2 (start|stop|ssh|ip)"
       exit 1
   fi
-  "do_$1"
+  cmd=$1; shift
+  "do_$cmd" "$@"
 }
 
 main "$@"

@@ -125,7 +125,10 @@ esac
 
 
 g () {
-  if (( $# > 0 )); then
+  if (( $# == 1 )) && [[ $1 == "pull" ]]; then
+    # Prevent conflict with bash-git-prompt
+    sh -c 'git pull'
+  elif (( $# > 0 )); then
     git "$@"
   else
     git status --short --branch
@@ -180,9 +183,17 @@ cm () {
   git commit -m "$*"
 }
 
+cmi () {
+  cm "Initial commit"
+}
+
 vwhich () { vim "$(command -v "$@")"; }
 complete -c vwhich
 
+token () {
+  bytes=${1:-3}
+  python3 -c "import secrets; print(secrets.token_hex($bytes))"
+}
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g

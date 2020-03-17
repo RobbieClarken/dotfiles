@@ -16,7 +16,7 @@ main () {
   else
     guess_cmd command
   fi
-  git ls-files | entr -r "${command[@]}"
+  git ls-files | entr "${command[@]}"
 }
 
 
