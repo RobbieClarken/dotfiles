@@ -37,6 +37,8 @@ MANPATH=/opt/tmux/share/man:$MANPATH
 MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
 export MANPATH
 
+export PIP_REQUIRE_VIRTUALENV=1
+
 # Run pipenv shell in fancy mode so we get the right version of bash
 export PIPENV_SHELL_FANCY=1
 
