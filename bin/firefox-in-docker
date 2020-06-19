@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -eu
+
+# Runs Firefox in a Docker container and connects to it with TurboVNC. If
+# TurboVNC is unavailable, falls back on using a Web UI. TurboVNC is highly
+# recommended as it has better clipboard synchronisation.
+
+readonly TURBOVNC_JAR='/Applications/TurboVNC/TurboVNC Viewer.app/Contents/Resources/Java/VncViewer.jar'
+readonly IMAGE='jlesage/firefox:v1.11.0'
+readonly WEBUI_PORT=5800
+readonly VNC_PORT=5900
+
+main () {
+  if not_running || [[ ${1:-} == "-f" ]]; then
+    restart_container
+    sleep 10
+  fi
+  connect
+}
+
+not_running () {
+  (( $(docker ps --quiet --filter name=firefox | wc -l) == 0 ))
+}
+
+restart_container() {
+  echo "restarting firefox container..."
+  docker rm -f firefox 2>/dev/null || true
+  docker run \
+    -d \
+    --name=firefox \
+    -p "$WEBUI_PORT:5800" \
+    -p "$VNC_PORT:5900" \
+    -e VNC_PASSWORD="$FIREFOX_IN_DOCKER_PASSWORD" \
+    -e TZ=UTC \
+    -v "$HOME/.config/firefox-in-docker:/config" \
+    --shm-size 2g \
+    "$IMAGE"
+}
+
+connect() {
+  if [[ -f "$TURBOVNC_JAR" ]]; then
+    java -jar "$TURBOVNC_JAR" -Password="$FIREFOX_IN_DOCKER_PASSWORD" "localhost:$VNC_PORT"
+  else
+    echo "TurboVNC not found. Launching Web UI instead..."
+    open "http://localhost:$WEBUI_PORT"
+  fi
+}
+
+main "$@"
