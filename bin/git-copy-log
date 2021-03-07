@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eu
+
+git log --format='%s%n%n%b' -n 1 "$@" | pbcopy && pbpaste | cat

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -eu
+
+main () {
+  if (( $# > 0 )); then
+    git checkout "$@"
+  else
+    git checkout "$(git branch --format='%(refname:short)' | fzf)"
+  fi
+}
+
+main "$@"

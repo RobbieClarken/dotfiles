@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -eu
+
+main () {
+  project=$(git remote get-url origin | grep -Po '(?<=:).*(?=\.git)')
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  open "https://gitlab.com/$project/-/merge_requests/new?merge_request%5Bsource_branch%5D=$branch"
+}
+
+main
