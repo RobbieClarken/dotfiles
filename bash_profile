@@ -44,7 +44,7 @@ export PIPENV_SHELL_FANCY=1
 
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 
-if [[ $(uname) == "Linux" ]] && hash setxkbmap 2>/dev/null; then
+if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
   # Remap caps lock to ctrl
   setxkbmap -option ctrl:nocaps
 fi
@@ -54,11 +54,11 @@ if hash pyenv 2>/dev/null; then
 fi
 
 if [ -f ~/.bash_profile.local ]; then
-  # shellcheck source=.bash_profile.local
-  source ~/.bash_profile.local
+  # shellcheck source=/dev/null
+  . ~/.bash_profile.local
 fi
 
-if [[ -f ~/.bashrc ]]; then
-  # shellcheck source=.bashrc
-  source ~/.bashrc
+if [ -f ~/.bashrc ]; then
+  # shellcheck source=/dev/null
+  . ~/.bashrc
 fi

@@ -1,22 +1,33 @@
 # Enable ctrl-s and ctrl-q
 stty -ixon -ixoff
 
+# shellcheck disable=SC2034
 GIT_PROMPT_THEME=Custom
-# shellcheck source=.dotfiles/bash-git-prompt/gitprompt.sh
-source ~/.dotfiles/bash-git-prompt/gitprompt.sh
+# shellcheck source=/dev/null
+. ~/.dotfiles/bash-git-prompt/gitprompt.sh
 
 if [ -f /usr/local/etc/bash_completion ]; then
   source /usr/local/etc/bash_completion
 fi
 
-if [ -f /usr/local/etc/profile.d/z.sh ]; then
-  source /usr/local/etc/profile.d/z.sh
+if command -v zoxide >/dev/null; then
+  eval "$(zoxide init bash)"
+fi
+
+if [ -f ~/.opam/opam-init/init.sh ]; then
+  # shellcheck source=/dev/null
+  . ~/.opam/opam-init/init.sh
+fi
+
+if [ -f ~/.ghcup/env ]; then
+  # shellcheck source=/dev/null
+  . ~/.ghcup/env
 fi
 
 if [[ -f ~/.fzf.bash ]]; then
 
-  # shellcheck source=.fzf.bash
-  source ~/.fzf.bash
+  # shellcheck source=/dev/null
+  . ~/.fzf.bash
 
   export FZF_DEFAULT_COMMAND='fd --type f --hidden'
   export FZF_CTRL_T_COMMAND='fd --hidden'
@@ -48,7 +59,7 @@ alias grep='grep --color=auto'
 alias gri='rg -i'
 alias tmp='pushd "$(mktemp -d)"'
 alias pytmp='pushd "$(mktemp -d)" && python3 -m venv .venv && source .venv/bin/activate'
-
+alias ungron='gron --ungron'
 
 alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 
@@ -126,7 +137,8 @@ esac
 
 g () {
   if (( $# == 1 )) && [[ $1 == "pull" ]]; then
-    # Prevent conflict with bash-git-prompt
+    # Prevent conflict with bash-git-prompt resulting in the error:
+    # "fatal: Cannot rebase onto multiple branches"
     sh -c 'git pull'
   elif (( $# > 0 )); then
     git "$@"
@@ -162,6 +174,10 @@ tox () {
   $(type -fp tox) "$@"
 }
 
+pipf () {
+  PIP_REQUIRE_VIRTUALENV=0 pip "$@"
+}
+
 pipvenv () {
   PIPENV_VENV_IN_PROJECT=1 pipenv "$@"
 }
@@ -191,7 +207,7 @@ vwhich () { vim "$(command -v "$@")"; }
 complete -c vwhich
 
 token () {
-  bytes=${1:-3}
+  bytes=${1:-8}
   python3 -c "import secrets; print(secrets.token_hex($bytes))"
 }
 
@@ -220,6 +236,6 @@ if hash _kubetail 2>/dev/null; then
 fi
 
 if [ -f ~/.bashrc.local ]; then
-  # shellcheck source=.bashrc.local
-  source ~/.bashrc.local
+  # shellcheck source=/dev/null
+  . ~/.bashrc.local
 fi
