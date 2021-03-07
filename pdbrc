@@ -1,0 +1,1 @@
+__import__("pdb").Pdb.complete = __import__("rlcompleter").Completer(locals()).complete
