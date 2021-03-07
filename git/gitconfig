@@ -17,6 +17,9 @@
 	pf = push --force-with-lease
 	sml = submodule foreach git log --oneline --decorate --graph -n 1
 	cmi = commit -m 'Initial commit'
+	find-merge = !git log $1..master --ancestry-path --merges --reverse
+	rb = !git fetch origin master:master && git rebase origin/master
+	fm = fetch origin master:master
 [pull]
 	rebase = true
 [fetch]

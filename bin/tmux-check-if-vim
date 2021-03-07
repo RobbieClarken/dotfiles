@@ -15,7 +15,7 @@ if [[ $(uname) = Darwin ]]; then
 
   ps -o state= \
      -p "$(
-       pstree "$(ps -o pid= -t "$pane_tty" | head -1)" | awk '/\y(vim|view)(\s|$)/{ print $2 }'
+       pstree "$(ps -o pid= -t "$pane_tty" | head -1)" | awk '/\y(vim|view|nvim)(\s|$)/{ print $2 }'
      )" 2>/dev/null \
        | grep -qE '^[^TXZ]'
 
@@ -25,6 +25,6 @@ else
     ps -o state=,comm= -p "$(pstree -p "$pipenv_pid" | grep -Po '\(\d+\)' | tr -d '()')"
   else
     ps -o state=,comm= -t "$pane_tty"
-  fi | grep -qP '^[^TXZ] (vim|view)$'
+  fi | grep -qP '^[^TXZ] (vim|view|nvim)$'
 
 fi
