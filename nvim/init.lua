@@ -23,6 +23,7 @@ require("packer").startup(function()
   }
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
+  use "neovim/nvim-lspconfig"  -- configuration for built-in lsp client
 end)
 
 
@@ -107,3 +108,25 @@ require("telescope").setup {
 require("telescope").load_extension("fzf")  -- use fzf for fuzzy filtering
 
 vim.api.nvim_set_keymap("n", "<c-p>", "<cmd>Telescope find_files<cr>", { noremap = true })
+
+-------------------------------
+---- neovim/nvim-lspconfig ----
+-------------------------------
+
+require("lspconfig").pyright.setup {
+  on_attach = function(client, bufnr)
+    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    local opts = { noremap=true, silent=true }
+    buf_set_keymap("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+    buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+    buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+    buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+  end
+}
+
+-- Don't display diagnostics using lsp because pyright generates annoying
+-- hints which cannot be disabled through pyright or neovim lsp:
+-- https://github.com/neovim/nvim-lspconfig/issues/726
+-- https://github.com/microsoft/pyright/issues/1541
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
