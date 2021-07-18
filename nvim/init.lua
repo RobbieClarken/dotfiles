@@ -10,6 +10,14 @@ require("packer").startup(function()
   use "tpope/vim-unimpaired"  -- handy bracket mappings
   use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
   use "vimwiki/vimwiki"  -- personal wiki and diary
+
+  -- fuzzy search all the things
+  use {
+    "nvim-telescope/telescope.nvim",
+    requires = {{"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"}}
+  }
+  use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
+
 end)
 
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
@@ -45,17 +53,40 @@ vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { no
 -- CUSTOMISE PLUGINS --
 -----------------------
 
+----------------------------------------
 ---- christoomey/vim-tmux-navigator ----
+----------------------------------------
+
 vim.g.tmux_navigator_no_mappings = true
 vim.api.nvim_set_keymap("n", "<m-h>", ":TmuxNavigateLeft<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-j>", ":TmuxNavigateDown<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-k>", ":TmuxNavigateUp<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true, silent = true })
 
+-------------------------
 ---- vimwiki/vimwiki ----
+-------------------------
 
 vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".md" }}
 
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside a markdown file:
 vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
+
+
+---------------------------------------
+---- nvim-telescope/telescope.nvim ----
+---------------------------------------
+
+require("telescope").setup {
+  defaults = {
+    mappings = {
+      i = {
+        ["<c-u>"] = false,  -- delete to start of line from inside telescope filter input
+      },
+    },
+  },
+}
+require("telescope").load_extension("fzf")  -- use fzf for fuzzy filtering
+
+vim.api.nvim_set_keymap("n", "<c-p>", "<cmd>Telescope find_files<cr>", { noremap = true })
