@@ -1,11 +1,16 @@
 require("packer").startup(function()
   use "wbthomason/packer.nvim"  -- allow packer to update itself
+  use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
   use "christoomey/vim-tmux-navigator"  -- enable navigating between vim splits and tmux panes
 end)
 
 vim.opt.expandtab = true  -- expand tabs into spaces
 vim.opt.hidden = true  -- allow switching buffers without saving
 vim.opt.wrap = false  -- disable text wrapping
+
+-- Disable swapfile messages about opening the file in multiple buffers;
+-- wincent/terminus will automatically reload changed files on focus.
+vim.opt.shortmess = vim.opt.shortmess + "A"
 
 -----------------------
 -- CUSTOMISE PLUGINS --
