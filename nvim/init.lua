@@ -4,9 +4,15 @@ require("packer").startup(function()
   use "christoomey/vim-tmux-navigator"  -- enable navigating between vim splits and tmux panes
 end)
 
-vim.opt.expandtab = true  -- expand tabs into spaces
+vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
 vim.opt.hidden = true  -- allow switching buffers without saving
 vim.opt.wrap = false  -- disable text wrapping
+
+vim.opt.expandtab = true  -- expand tabs into spaces
+vim.opt.shiftwidth = 2  -- replace tabs with 2 spaces
+vim.opt.tabstop = 2  -- display tabs with a width of two characters
+vim.opt.listchars = "tab:└─"  -- use special characters to make tabs 
+vim.opt.list = true  -- enable displaying tabs according to listchars setting
 
 -- Disable swapfile messages about opening the file in multiple buffers;
 -- wincent/terminus will automatically reload changed files on focus.
