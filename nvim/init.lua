@@ -14,6 +14,7 @@ require("packer").startup(function()
   use "tpope/vim-unimpaired"  -- handy bracket mappings
   use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
   use "vimwiki/vimwiki"  -- personal wiki and diary
+  use "chriskempson/base16-vim"  -- add support for base16 colour schemes
 
   -- fuzzy search all the things
   use {
@@ -45,6 +46,12 @@ vim.opt.list = true  -- enable displaying tabs according to listchars setting
 -- Disable swapfile messages about opening the file in multiple buffers;
 -- wincent/terminus will automatically reload changed files on focus.
 vim.opt.shortmess = vim.opt.shortmess + "A"
+
+-- Configure to use base16 colour scheme.
+vim.g.base16colorspace = 256
+if vim.fn.filereadable(vim.fn.expand("~/.bashrc")) then
+  vim.cmd("source ~/.vimrc_background")
+end
 
 
 -------------
