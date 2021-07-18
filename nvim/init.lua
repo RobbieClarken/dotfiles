@@ -1,3 +1,7 @@
+-------------
+-- PLUGINS --
+-------------
+
 require("packer").startup(function()
   use "wbthomason/packer.nvim"  -- allow packer to update itself
   use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
@@ -20,6 +24,14 @@ require("packer").startup(function()
 
 end)
 
+
+----------------------
+-- GENERAL SETTINGS --
+----------------------
+
+vim.opt.number = true  -- show line numbers
+vim.opt.ignorecase = true  -- make search case-insensitive
+vim.opt.smartcase = true  -- if search term contains capital letter, make search case-sensitive
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
 vim.opt.hidden = true  -- allow switching buffers without saving
 vim.opt.wrap = false  -- disable text wrapping
@@ -35,13 +47,12 @@ vim.opt.list = true  -- enable displaying tabs according to listchars setting
 vim.opt.shortmess = vim.opt.shortmess + "A"
 
 
-vim.g.mapleader = " "  -- use space bar as leader key
-vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
-
-
 -------------
 -- KEYMAPS --
 -------------
+
+vim.g.mapleader = " "  -- use space bar as leader key
+vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
 
 vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -- alternate buffers
 
@@ -72,7 +83,6 @@ vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside a markdown file:
 vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
-
 
 ---------------------------------------
 ---- nvim-telescope/telescope.nvim ----
