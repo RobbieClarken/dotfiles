@@ -25,11 +25,26 @@ vim.opt.list = true  -- enable displaying tabs according to listchars setting
 -- wincent/terminus will automatically reload changed files on focus.
 vim.opt.shortmess = vim.opt.shortmess + "A"
 
+
+vim.g.mapleader = " "  -- use space bar as leader key
+vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
+
+
+-------------
+-- KEYMAPS --
+-------------
+
+vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -- alternate buffers
+
+-- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
+vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { noremap = true })
+
+
 -----------------------
 -- CUSTOMISE PLUGINS --
 -----------------------
 
--- christoomey/vim-tmux-navigator --
+---- christoomey/vim-tmux-navigator ----
 vim.g.tmux_navigator_no_mappings = true
 vim.api.nvim_set_keymap("n", "<m-h>", ":TmuxNavigateLeft<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-j>", ":TmuxNavigateDown<cr>", { noremap = true, silent = true })
