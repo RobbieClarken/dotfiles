@@ -1,2 +1,4 @@
-tmux/plugins/
-tmux/resurrect/
+/nvim/plugin/
+/tmux/plugins/
+/tmux/resurrect/
+
