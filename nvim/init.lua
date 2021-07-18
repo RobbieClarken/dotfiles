@@ -2,6 +2,13 @@ require("packer").startup(function()
   use "wbthomason/packer.nvim"  -- allow packer to update itself
   use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
   use "christoomey/vim-tmux-navigator"  -- enable navigating between vim splits and tmux panes
+  use "tommcdo/vim-exchange"  -- swap regions of text
+  use "tpope/vim-commentary"  -- easily comment/uncomment code
+  use "tpope/vim-fugitive"  -- git support
+  use "tpope/vim-repeat"  -- add . support to plugin commands
+  use "tpope/vim-surround"  --  change parentheses and quotes
+  use "tpope/vim-unimpaired"  -- handy bracket mappings
+  use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
 end)
 
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
