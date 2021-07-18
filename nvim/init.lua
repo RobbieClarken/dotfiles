@@ -24,6 +24,7 @@ require("packer").startup(function()
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
   use "neovim/nvim-lspconfig"  -- configuration for built-in lsp client
+  use "dense-analysis/ale"  -- asynchronous linter
 end)
 
 
@@ -37,6 +38,7 @@ vim.opt.smartcase = true  -- if search term contains capital letter, make search
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
 vim.opt.hidden = true  -- allow switching buffers without saving
 vim.opt.wrap = false  -- disable text wrapping
+vim.opt.textwidth = 90  -- used for formatting text with gq
 
 vim.opt.expandtab = true  -- expand tabs into spaces
 vim.opt.shiftwidth = 2  -- replace tabs with 2 spaces
@@ -67,6 +69,12 @@ vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -
 -- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
 vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { noremap = true })
 
+-- Enable navigating through ale / vimwiki location lists using arrow keys.
+vim.api.nvim_set_keymap("n", "<left>", ":lpfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<right>", ":lnfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<up>", ":lprevious<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<down>", ":lnext<cr>", { noremap = true })
+
 
 -----------------------
 -- CUSTOMISE PLUGINS --
@@ -88,7 +96,8 @@ vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true
 
 vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".md" }}
 
--- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside a markdown file:
+-- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside
+-- a markdown file:
 vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
 
@@ -130,3 +139,20 @@ require("lspconfig").pyright.setup {
 -- https://github.com/neovim/nvim-lspconfig/issues/726
 -- https://github.com/microsoft/pyright/issues/1541
 vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+
+----------------------------
+---- dense-analysis/ale ----
+----------------------------
+
+vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
+-- The g:ale_sign_column_always should prevent the text jumping but it is currently not
+-- working for neovim v0.5 due to a bug: https://github.com/dense-analysis/ale/issues/3801
+vim.g.ale_sign_column_always = 1  -- prevent text jumping around
+vim.g.ale_linters = {
+  python = { "flake8", "mypy" },
+}
+vim.g.ale_pattern_options = {
+  -- Disable ale on markdown files because it interferes with vimwiki searches populating
+  -- the location list.
+  [".md$"] = { ale_linters = {}, ale_fixers = {} },
+}
