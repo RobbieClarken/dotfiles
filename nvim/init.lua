@@ -9,6 +9,7 @@ require("packer").startup(function()
   use "tpope/vim-surround"  --  change parentheses and quotes
   use "tpope/vim-unimpaired"  -- handy bracket mappings
   use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
+  use "vimwiki/vimwiki"  -- personal wiki and diary
 end)
 
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
@@ -50,3 +51,11 @@ vim.api.nvim_set_keymap("n", "<m-h>", ":TmuxNavigateLeft<cr>", { noremap = true,
 vim.api.nvim_set_keymap("n", "<m-j>", ":TmuxNavigateDown<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-k>", ":TmuxNavigateUp<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true, silent = true })
+
+---- vimwiki/vimwiki ----
+
+vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".md" }}
+
+-- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside a markdown file:
+vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
