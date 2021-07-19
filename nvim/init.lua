@@ -129,8 +129,8 @@ require("lspconfig").pyright.setup {
     local opts = { noremap=true, silent=true }
     buf_set_keymap("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
     buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-    buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-    buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+    buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+    buf_set_keymap("n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
   end
 }
 
