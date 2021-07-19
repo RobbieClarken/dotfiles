@@ -57,6 +57,10 @@ if vim.fn.filereadable(vim.fn.expand("~/.bashrc")) then
 end
 
 
+vim.g.loaded_python_provider = 0
+vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
+
+
 -------------
 -- KEYMAPS --
 -------------
@@ -151,8 +155,13 @@ vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
 }
+vim.g.ale_fixers = {
+  python = { "black" },
+}
 vim.g.ale_pattern_options = {
   -- Disable ale on markdown files because it interferes with vimwiki searches populating
   -- the location list.
   [".md$"] = { ale_linters = {}, ale_fixers = {} },
 }
+
+vim.api.nvim_set_keymap("n", "<leader>p", ":ALEFix<cr>", { noremap = true, silent = true })
