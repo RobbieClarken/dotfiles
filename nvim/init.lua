@@ -38,7 +38,9 @@ vim.opt.smartcase = true  -- if search term contains capital letter, make search
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
 vim.opt.hidden = true  -- allow switching buffers without saving
 vim.opt.wrap = false  -- disable text wrapping
+vim.opt.formatoptions = "qj"  -- don't auto text wrap; do remove comment leader when joining lines
 vim.opt.textwidth = 90  -- used for formatting text with gq
+vim.opt.colorcolumn = "90"  -- discourage excessively long lines of code
 
 vim.opt.expandtab = true  -- expand tabs into spaces
 vim.opt.shiftwidth = 2  -- replace tabs with 2 spaces
@@ -56,8 +58,8 @@ if vim.fn.filereadable(vim.fn.expand("~/.bashrc")) then
   vim.cmd("source ~/.vimrc_background")
 end
 
-
-vim.g.loaded_python_provider = 0
+vim.g.loaded_python_provider = 0  -- disable python 2 support
+-- Look for python 3 dependencies in a virtual environment.
 vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
 
 
@@ -78,6 +80,11 @@ vim.api.nvim_set_keymap("n", "<left>", ":lpfile<cr>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<right>", ":lnfile<cr>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<up>", ":lprevious<cr>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<down>", ":lnext<cr>", { noremap = true })
+
+vim.api.nvim_set_keymap("n", "<s-left>", ":cpfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-right>", ":cnfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
 
 
 -----------------------

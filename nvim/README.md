@@ -14,5 +14,5 @@ nvim +PackerSync
 
 ```bash
 npm install -g pyright
-pipx install black
+pipx install black flake8
 ```
