@@ -62,6 +62,9 @@ vim.g.loaded_python_provider = 0  -- disable python 2 support
 -- Look for python 3 dependencies in a virtual environment.
 vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
 
+-- When reopening a file, jump to the last location.
+vim.cmd([[autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
+
 -- Configure :gr to use ripgrep if it is available.
 if vim.fn.executable("rg") then
   vim.opt.grepprg = "rg --vimgrep --smart-case"
