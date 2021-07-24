@@ -71,29 +71,8 @@ if vim.fn.executable("rg") then
   vim.opt.grepformat = "%f:%l:%c:%m"
 end
 
-
--------------
--- KEYMAPS --
--------------
-
 vim.g.mapleader = " "  -- use space bar as leader key
 vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
-
-vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -- alternate buffers
-
--- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
-vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { noremap = true })
-
--- Enable navigating through ale / vimwiki location lists using arrow keys.
-vim.api.nvim_set_keymap("n", "<left>", ":lpfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<right>", ":lnfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<up>", ":lprevious<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<down>", ":lnext<cr>", { noremap = true })
-
-vim.api.nvim_set_keymap("n", "<s-left>", ":cpfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-right>", ":cnfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
 
 
 -----------------------
@@ -181,3 +160,36 @@ vim.g.ale_pattern_options = {
 }
 
 vim.api.nvim_set_keymap("n", "<leader>p", ":ALEFix<cr>", { noremap = true, silent = true })
+
+
+-------------
+-- KEYMAPS --
+-------------
+
+-- Enable reloading config with <leader>R.
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>R",
+  [[:lua package.loaded.rbc = nil<cr>:source ~/.config/nvim/init.lua<cr>"]],
+  { noremap = true }
+)
+
+vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -- alternate buffers
+
+-- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
+vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { noremap = true })
+
+-- Enable navigating through ale / vimwiki location lists using arrow keys.
+vim.api.nvim_set_keymap("n", "<left>", ":lpfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<right>", ":lnfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<up>", ":lprevious<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<down>", ":lnext<cr>", { noremap = true })
+
+-- Enable navigating through quickfix lists using shift/alt + arrow keys.
+vim.api.nvim_set_keymap("n", "<s-left>", ":cpfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-right>", ":cnfile<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
+
+vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { noremap = true, silent = true })
