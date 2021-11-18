@@ -7,6 +7,7 @@ require("packer").startup(function()
   use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
   use "christoomey/vim-tmux-navigator"  -- enable navigating between vim splits and tmux panes
   use "tommcdo/vim-exchange"  -- swap regions of text
+  use "tpope/vim-abolish"  -- add :%S/Foo/Bar/
   use "tpope/vim-commentary"  -- easily comment/uncomment code
   use "tpope/vim-fugitive"  -- git support
   use "tpope/vim-repeat"  -- add . support to plugin commands
@@ -47,6 +48,8 @@ vim.opt.shiftwidth = 2  -- replace tabs with 2 spaces
 vim.opt.tabstop = 2  -- display tabs with a width of two characters
 vim.opt.listchars = "tab:└─"  -- use special characters to make tabs 
 vim.opt.list = true  -- enable displaying tabs according to listchars setting
+
+vim.opt.path = vim.opt.path + "**"  -- Make :find and gf look in subdirectories
 
 -- Disable swapfile messages about opening the file in multiple buffers;
 -- wincent/terminus will automatically reload changed files on focus.
@@ -99,6 +102,7 @@ vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".
 -- a markdown file:
 vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ww", ":VimwikiIndex 1<cr>", { noremap = true, silent = true })
 
 ---------------------------------------
 ---- nvim-telescope/telescope.nvim ----
@@ -121,17 +125,19 @@ vim.api.nvim_set_keymap("n", "<c-p>", "<cmd>Telescope find_files<cr>", { noremap
 ---- neovim/nvim-lspconfig ----
 -------------------------------
 
-require("lspconfig").pyright.setup {
-  on_attach = function(client, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    local opts = { noremap=true, silent=true }
-    buf_set_keymap("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-    buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-    buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-    buf_set_keymap("n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-  end
-}
+require("lspconfig").pyright.setup(
+    {
+      on_attach = function(client, bufnr)
+        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local opts = { noremap=true, silent=true }
+        buf_set_keymap("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+        buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+        buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+        buf_set_keymap("n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+      end
+    }
+)
 
 -- Don't display diagnostics using lsp because pyright generates annoying
 -- hints which cannot be disabled through pyright or neovim lsp:
@@ -192,4 +198,5 @@ vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
 
 vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>g", "<cmd>lua require('rbc').copy_python_path()<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { noremap = true, silent = true })
