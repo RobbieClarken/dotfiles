@@ -20,6 +20,7 @@
 	find-merge = !git log $1..master --ancestry-path --merges --reverse
 	rb = !git fetch origin master:master && git rebase origin/master
 	fm = fetch origin master:master
+	b = !git fetch && git checkout origin/master -b
 [pull]
 	rebase = true
 [fetch]
@@ -32,3 +33,5 @@
 	textconv = sops -d
 [url "https://"]
 	insteadOf = git://
+[init]
+	defaultBranch = master

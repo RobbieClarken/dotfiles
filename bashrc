@@ -66,6 +66,7 @@ alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
+alias vim='nvim'
 
 pwdc () {
   if (( $# > 0 )); then

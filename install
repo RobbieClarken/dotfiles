@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -eu
 
@@ -21,15 +21,9 @@ update_git () {
   fi
 }
 
-update_vimrc () {
-  if [[ -e "$HOME/.vim" ]]; then
-    rm -rf "$HOME/.vim"
-  fi
-  ln -snf "$HOME/.dotfiles/vim" "$HOME/.vim"
-  ln -snf "$HOME/.vim/vimrc" "$HOME/.vimrc"
-  if hash vim 2>/dev/null; then
-    vim +PlugInstall +qall
-  fi
+install_neovim_conf () {
+  mkdir -p "$HOME/.config"
+  ln -snf "$HOME/.dotfiles/nvim" "$HOME/.config/vim"
 }
 
 update_tmux_conf () {
@@ -48,7 +42,7 @@ main () {
   update_bashrc
   install_base16
   update_git
-  update_vimrc
+  install_neovim_conf
   update_tmux_conf
   update_others
 }

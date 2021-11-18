@@ -27,7 +27,10 @@ PATH=$HOME/.cargo/bin:$PATH
 PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
+PATH=/usr/local/opt/grep/libexec/gnubin:$PATH
 PATH=/usr/local/opt/gnu-getopt/bin:$PATH
+PATH=/usr/local/opt/curl/bin:$PATH
+PATH=/usr/local/opt/openjdk/bin:$PATH
 PATH=$N_PREFIX/bin:$PATH
 export PATH
 
@@ -50,6 +53,7 @@ if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
 fi
 
 if hash pyenv 2>/dev/null; then
+  eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
 
