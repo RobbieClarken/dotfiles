@@ -50,6 +50,18 @@
   base16_unikitty-dark
   ```
 
+## Requirements
+
+### macos
+
+The following must be installed to enable navigating vim/tmux windows with `<opt-{h,j,k,l}>`:
+
+```
+gawk
+grep
+pstree
+```
+
 ## Acknowledgements
 
 Tmux theme lifted from [nicknisi/dotfiles](https://github.com/nicknisi/dotfiles).

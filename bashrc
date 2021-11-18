@@ -1,13 +1,19 @@
 # Enable ctrl-s and ctrl-q
 stty -ixon -ixoff
 
+BASE16_SHELL=$HOME/.config/base16-shell/
+[ -n "$PS1" ] \
+  && [ -s "$BASE16_SHELL/profile_helper.sh" ] \
+  && eval "$("$BASE16_SHELL/profile_helper.sh")"
+
 # shellcheck disable=SC2034
 GIT_PROMPT_THEME=Custom
 # shellcheck source=/dev/null
 . ~/.dotfiles/bash-git-prompt/gitprompt.sh
 
 if [ -f /usr/local/etc/bash_completion ]; then
-  source /usr/local/etc/bash_completion
+  # shellcheck source=/dev/null
+  . /usr/local/etc/bash_completion
 fi
 
 if command -v zoxide >/dev/null; then
@@ -66,7 +72,6 @@ alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
 alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
-alias vim='nvim'
 
 pwdc () {
   if (( $# > 0 )); then

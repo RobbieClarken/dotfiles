@@ -2,6 +2,18 @@
 -- PLUGINS --
 -------------
 
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  packer_bootstrap = vim.fn.system({
+    'git',
+    'clone',
+    '--depth',
+    '1',
+    'https://github.com/wbthomason/packer.nvim',
+    install_path,
+  })
+end
+
 require("packer").startup(function()
   use "wbthomason/packer.nvim"  -- allow packer to update itself
   use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
@@ -26,8 +38,11 @@ require("packer").startup(function()
 
   use "neovim/nvim-lspconfig"  -- configuration for built-in lsp client
   use "dense-analysis/ale"  -- asynchronous linter
-end)
 
+  if packer_bootstrap then
+    require('packer').sync()
+  end
+end)
 
 ----------------------
 -- GENERAL SETTINGS --
@@ -57,7 +72,7 @@ vim.opt.shortmess = vim.opt.shortmess + "A"
 
 -- Configure to use base16 colour scheme.
 vim.g.base16colorspace = 256
-if vim.fn.filereadable(vim.fn.expand("~/.bashrc")) then
+if vim.fn.filereadable(vim.fn.expand("~/.vimrc_background")) then
   vim.cmd("source ~/.vimrc_background")
 end
 
@@ -96,7 +111,7 @@ vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true
 ---- vimwiki/vimwiki ----
 -------------------------
 
-vim.g.vimwiki_list = {{ path = "~/Dropbox/Notes/", syntax = "markdown", ext = ".md" }}
+vim.g.vimwiki_list = {{ path = "~/Documents/Notes/", syntax = "markdown", ext = ".md" }}
 
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside
 -- a markdown file:

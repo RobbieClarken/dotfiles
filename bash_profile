@@ -8,13 +8,10 @@ unset SSH_ASKPASS
 
 export CLICOLOR=1
 
-BASE16_SHELL=$HOME/.config/base16-shell/
-[ -n "$PS1" ] \
-  && [ -s "$BASE16_SHELL/profile_helper.sh" ] \
-  && eval "$("$BASE16_SHELL/profile_helper.sh")"
+export GOPATH="$HOME/Developer/Go"
+export N_PREFIX="$HOME/.local/n"
 
-export GOPATH=$HOME/Developer/Go
-export N_PREFIX=$HOME/.local/n
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=$HOME/Developer/bin:$PATH
@@ -26,18 +23,14 @@ PATH=$HOME/.local/bin:$PATH
 PATH=$HOME/.cargo/bin:$PATH
 PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
-PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
-PATH=/usr/local/opt/grep/libexec/gnubin:$PATH
-PATH=/usr/local/opt/gnu-getopt/bin:$PATH
-PATH=/usr/local/opt/curl/bin:$PATH
-PATH=/usr/local/opt/openjdk/bin:$PATH
+PATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH
+PATH=$HOMEBREW_PREFIX/opt/grep/libexec/gnubin:$PATH
 PATH=$N_PREFIX/bin:$PATH
 export PATH
 
 MANPATH=/usr/local/share/man:$MANPATH
 MANPATH=/opt/squashfuse/share/man:$MANPATH
-MANPATH=/opt/tmux/share/man:$MANPATH
-MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
+MANPATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnuman:$MANPATH
 export MANPATH
 
 export PIP_REQUIRE_VIRTUALENV=1
@@ -53,6 +46,8 @@ if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
 fi
 
 if hash pyenv 2>/dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
