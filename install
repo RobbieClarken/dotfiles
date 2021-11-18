@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -eux
 
 update_bashrc () {
   ln -snf "$HOME/.dotfiles/bash_profile" "$HOME/.bash_profile"
@@ -23,7 +23,7 @@ update_git () {
 
 install_neovim_conf () {
   mkdir -p "$HOME/.config"
-  ln -snf "$HOME/.dotfiles/nvim" "$HOME/.config/vim"
+  ln -snf "$HOME/.dotfiles/nvim" "$HOME/.config/nvim"
 }
 
 update_tmux_conf () {
@@ -33,7 +33,6 @@ update_tmux_conf () {
 
 update_others () {
   ln -snf "$HOME/.dotfiles/ctags" "$HOME/.ctags"
-  ln -snf "$HOME/.dotfiles/importjs.js" "$HOME/.importjs.js"
   ln -snf "$HOME/.dotfiles/ignore" "$HOME/.rgignore"
   ln -snf "$HOME/.dotfiles/ignore" "$HOME/.fdignore"
 }
