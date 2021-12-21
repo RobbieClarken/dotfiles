@@ -91,6 +91,9 @@ vim.api.nvim_set_keymap("c", "<c-e>", "<end>", { noremap = true })
 vim.api.nvim_set_keymap("n", "k", "(v:count > 5 ? \"m'\" . v:count : '') . 'k'", { noremap = true, expr = true })
 vim.api.nvim_set_keymap("n", "j", "(v:count > 5 ? \"m'\" . v:count : '') . 'j'", { noremap = true, expr = true })
 
+-- Briefly highlight yanked text
+vim.cmd[[au TextYankPost * silent! lua vim.highlight.on_yank()]]
+
 -- Configure :gr to use ripgrep if it is available.
 if vim.fn.executable("rg") then
   vim.opt.grepprg = "rg --vimgrep --smart-case"
@@ -119,7 +122,7 @@ vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true
 ---- vimwiki/vimwiki ----
 -------------------------
 
-vim.g.vimwiki_list = {{ path = "~/Documents/Notes/", syntax = "markdown", ext = ".md" }}
+vim.g.vimwiki_list = {{ path = "~/Documents/notes/", syntax = "markdown", ext = ".md" }}
 
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside
 -- a markdown file:
