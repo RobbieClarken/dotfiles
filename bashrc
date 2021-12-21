@@ -11,9 +11,9 @@ GIT_PROMPT_THEME=Custom
 # shellcheck source=/dev/null
 . ~/.dotfiles/bash-git-prompt/gitprompt.sh
 
-if [ -f /usr/local/etc/bash_completion ]; then
+if [ -f "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
   # shellcheck source=/dev/null
-  . /usr/local/etc/bash_completion
+  . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
 fi
 
 if command -v zoxide >/dev/null; then
