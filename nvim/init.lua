@@ -83,6 +83,10 @@ vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
 -- When reopening a file, jump to the last location.
 vim.cmd([[autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
 
+-- Enable readline commands in command mode
+vim.api.nvim_set_keymap("c", "<c-a>", "<home>", { noremap = true })
+vim.api.nvim_set_keymap("c", "<c-e>", "<end>", { noremap = true })
+
 -- Configure :gr to use ripgrep if it is available.
 if vim.fn.executable("rg") then
   vim.opt.grepprg = "rg --vimgrep --smart-case"
