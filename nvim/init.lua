@@ -87,6 +87,10 @@ vim.cmd([[autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") |
 vim.api.nvim_set_keymap("c", "<c-a>", "<home>", { noremap = true })
 vim.api.nvim_set_keymap("c", "<c-e>", "<end>", { noremap = true })
 
+-- Store large relative jumps in jumplist
+vim.api.nvim_set_keymap("n", "k", "(v:count > 5 ? \"m'\" . v:count : '') . 'k'", { noremap = true, expr = true })
+vim.api.nvim_set_keymap("n", "j", "(v:count > 5 ? \"m'\" . v:count : '') . 'j'", { noremap = true, expr = true })
+
 -- Configure :gr to use ripgrep if it is available.
 if vim.fn.executable("rg") then
   vim.opt.grepprg = "rg --vimgrep --smart-case"
