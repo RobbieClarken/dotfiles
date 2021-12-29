@@ -1,0 +1,3 @@
+$if Bash
+  SPACE: magic-space
+$endif
