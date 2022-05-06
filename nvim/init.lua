@@ -83,18 +83,30 @@ vim.g.loaded_python_provider = 0  -- disable python 2 support
 vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
 
 -- When reopening a file, jump to the last location.
-vim.cmd([[autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
+vim.api.nvim_create_autocmd(
+  "BufReadPost",
+  {
+    command = [[if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]],
+    group = vim.api.nvim_create_augroup("JumpToLastLocation", {}),
+  }
+)
 
 -- Enable readline commands in command mode
 vim.keymap.set("c", "<c-a>", "<home>")
 vim.keymap.set("c", "<c-e>", "<end>")
 
 -- Store large relative jumps in jumplist
-vim.keymap.set("n", "k", "(v:count > 5 ? \"m'\" . v:count : '') . 'k'", { expr = true })
-vim.keymap.set("n", "j", "(v:count > 5 ? \"m'\" . v:count : '') . 'j'", { expr = true })
+vim.keymap.set("n", "k", [[(v:count > 5 ? "m'" . v:count : '') . 'k']], { expr = true })
+vim.keymap.set("n", "j", [[(v:count > 5 ? "m'" . v:count : '') . 'j']], { expr = true })
 
 -- Briefly highlight yanked text
-vim.cmd[[au TextYankPost * silent! lua vim.highlight.on_yank()]]
+vim.api.nvim_create_autocmd(
+  "TextYankPost",
+  {
+    command = [[lua vim.highlight.on_yank()]],
+    group = vim.api.nvim_create_augroup("HighlightOnYank", {}),
+  }
+)
 
 -- Configure :gr to use ripgrep if it is available.
 if vim.fn.executable("rg") then
