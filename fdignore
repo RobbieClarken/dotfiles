@@ -6,3 +6,4 @@ Temp
 node_modules
 *.swp
 .cpcache
+!*.graphql

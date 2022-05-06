@@ -8,7 +8,7 @@ unset SSH_ASKPASS
 
 export CLICOLOR=1
 
-export GOPATH="$HOME/Developer/Go"
+export GOPATH="$HOME/Developer/go"
 export N_PREFIX="$HOME/.local/n"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"

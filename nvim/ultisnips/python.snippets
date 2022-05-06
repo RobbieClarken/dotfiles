@@ -1,0 +1,184 @@
+snippet if
+if __name__ == "__main__":
+	main()$0
+endsnippet
+
+
+snippet 404
+from rest_framework.generics import get_object_or_404
+endsnippet
+
+
+snippet response
+from rest_framework.response import Response
+endsnippet
+
+
+snippet interact
+from code import interact
+interact(local=locals())
+endsnippet
+
+
+snippet setup
+from setuptools import setup
+import re
+
+
+with open("src/$1/__init__.py") as file:
+	version = re.search(r'__version__ = "(.*)"', file.read()).group(1)
+
+
+setup(
+	name="$1",
+	version=version,
+	license="MIT",
+	author="Robbie Clarken",
+	author_email="robbie.clarken@gmail.com",
+	url="https://github.com/RobbieClarken/$1",
+	package_dir={"": "src"},
+	packages=["$1"],
+	install_requires=[$0],
+)
+endsnippet
+
+
+snippet sleep
+import time
+time.sleep(3)
+endsnippet
+
+
+snippet vcr
+from vcr import VCR
+
+
+vcr = VCR(cassette_library_dir="tests/fixtures/cassettes", record_mode="new_episodes")
+endsnippet
+
+
+snippet dt
+from datetime import datetime
+endsnippet
+
+
+snippet entry
+entry_points={
+	"console_scripts": [
+		"$1",
+	],
+},$0
+endsnippet
+
+
+snippet log
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+handler.setFormatter(
+	logging.Formatter(
+		"%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s "
+		"%(filename)s:%(funcName)s:%(lineno)d | %(message)s",
+		datefmt="%Y-%m-%dT%H:%M:%S",
+	)
+)
+logger.handlers = [handler]
+logger.setLevel("DEBUG")
+endsnippet
+
+
+snippet flask
+from flask import Flask
+
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+	return "All good"
+
+
+if __name__ == "__main__":
+	app.run(host="0.0.0.0", debug=True)
+endsnippet
+
+
+snippet pdb
+import pdb
+pdb.set_trace()
+endsnippet
+
+
+snippet b
+breakpoint()
+endsnippet
+
+
+snippet qpdb
+import pdb
+from PyQt5.QtCore import pyqtRemoveInputHook
+pyqtRemoveInputHook()
+pdb.set_trace()
+endsnippet
+
+
+snippet rdb
+from celery.contrib import rdb
+rdb.set_trace()
+endsnippet
+
+
+snippet test
+@pytest.mark.xfail
+def test_$1():
+	raise NotImplementedError$0
+endsnippet
+
+
+snippet xf
+@pytest.mark.xfail
+endsnippet
+
+
+snippet wip
+@pytest.mark.wip
+endsnippet
+
+
+snippet pt
+import pytest  # noqa
+endsnippet
+
+
+snippet loop
+loop = asyncio.get_event_loop()
+endsnippet
+
+
+snippet qt
+from PyQt5.QtWidgets import QWidget, QApplication
+
+
+app = QApplication([])
+widget = QWidget()
+widget.show()
+app.exec_()
+endsnippet
+
+
+snippet init
+def __init__(self, $1):
+	$0
+endsnippet
+
+
+snippet param
+@pytest.mark.parametrize("$1", [
+	$0
+])
+endsnippet
+
+
+snippet trim
+from django_informixdb.fields import TrimCharField
+endsnippet

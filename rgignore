@@ -1,0 +1,9 @@
+*.min.js
+*.svg
+__snapshots__
+.git
+Temp
+node_modules
+*.swp
+.cpcache
+package-lock.json

@@ -27,7 +27,9 @@ require("packer").startup(function()
   use "tpope/vim-unimpaired"  -- handy bracket mappings
   use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
   use "vimwiki/vimwiki"  -- personal wiki and diary
+  use "sirver/ultisnips"  -- code snippets manager
   use "chriskempson/base16-vim"  -- add support for base16 colour schemes
+  use "jparise/vim-graphql"  -- syntax highlighting for GraphQL
 
   -- fuzzy search all the things
   use {
@@ -103,6 +105,7 @@ end
 vim.g.mapleader = " "  -- use space bar as leader key
 vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
 
+vim.g.python3_host_prog = "~/.local/nvim-venv3/bin/python3"
 
 -----------------------
 -- CUSTOMISE PLUGINS --
@@ -154,13 +157,12 @@ vim.api.nvim_set_keymap("n", "<c-p>", "<cmd>Telescope find_files<cr>", { noremap
 require("lspconfig").pyright.setup(
     {
       on_attach = function(client, bufnr)
-        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-        local opts = { noremap=true, silent=true }
-        buf_set_keymap("n", "<c-]>", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-        buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-        buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-        buf_set_keymap("n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+        vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+        local opts = { buffer=0 }
+        vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
       end
     }
 )
@@ -192,7 +194,11 @@ vim.g.ale_pattern_options = {
 }
 
 vim.api.nvim_set_keymap("n", "<leader>p", ":ALEFix<cr>", { noremap = true, silent = true })
+----------------------------
+---- sirver/ultisnips ----
+----------------------------
 
+vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config")..'/ultisnips' }
 
 -------------
 -- KEYMAPS --
@@ -224,5 +230,5 @@ vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
 
 vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>g", "<cmd>lua require('rbc').copy_python_path()<cr>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { noremap = true, silent = true })

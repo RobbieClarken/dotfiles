@@ -1,0 +1,63 @@
+snippet rust
+repos:
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: rustfmt
+        language: script
+        entry: /usr/bin/env rustfmt --edition 2018
+        types: [rust]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+endsnippet
+
+snippet js
+repos:
+  - repo: https://github.com/prettier/prettier
+    rev: '1.17.1'
+    hooks:
+      - id: prettier
+        files: '\.(js|ts|html|css|scss|less)$'
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+endsnippet
+
+snippet "(py|python)" "python pre-commit config" r
+repos:
+  - repo: https://github.com/ambv/black
+    rev: 19.10b0
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: '3.7.9'
+    hooks:
+      - id: flake8
+        language_version: python3
+
+  - repo: https://github.com/timothycrosley/isort
+    rev: '4.3.21-2'
+    hooks:
+      - id: isort
+        additional_dependencies:
+          - toml
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: debug-statements
+endsnippet

@@ -1,0 +1,35 @@
+snippet py
+{
+	"src/$1/*.py": {
+		"alternate": "tests/test_{}.py"
+	},
+	"tests/test_*.py": {
+		"alternate": "src/$1/{}.py"
+	}
+}
+endsnippet
+
+
+snippet react
+{
+	"src/components/*.js": {
+		"alternate": "src/tests/components/{}.test.js"
+	},
+	"src/tests/components/*.test.js": {
+		"alternate": "src/components/{}.js",
+		"template": [
+			"import React from 'react'",
+			"import {open} mount {close} from 'enzyme'",
+			"",
+			"import {} from '../../components/{}'",
+			"",
+			"",
+			"describe('<{} />', () => {",
+			"  it('', () => {open}",
+			"    const component = mount(<{} />)",
+			"  {close})",
+			"{close})"
+		]
+	}
+}
+endsnippet
