@@ -86,12 +86,12 @@ vim.g.python3_host_prog = "~/.local/share/nvim/python3-venv/bin/python3"
 vim.cmd([[autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
 
 -- Enable readline commands in command mode
-vim.api.nvim_set_keymap("c", "<c-a>", "<home>", { noremap = true })
-vim.api.nvim_set_keymap("c", "<c-e>", "<end>", { noremap = true })
+vim.keymap.set("c", "<c-a>", "<home>")
+vim.keymap.set("c", "<c-e>", "<end>")
 
 -- Store large relative jumps in jumplist
-vim.api.nvim_set_keymap("n", "k", "(v:count > 5 ? \"m'\" . v:count : '') . 'k'", { noremap = true, expr = true })
-vim.api.nvim_set_keymap("n", "j", "(v:count > 5 ? \"m'\" . v:count : '') . 'j'", { noremap = true, expr = true })
+vim.keymap.set("n", "k", "(v:count > 5 ? \"m'\" . v:count : '') . 'k'", { expr = true })
+vim.keymap.set("n", "j", "(v:count > 5 ? \"m'\" . v:count : '') . 'j'", { expr = true })
 
 -- Briefly highlight yanked text
 vim.cmd[[au TextYankPost * silent! lua vim.highlight.on_yank()]]
@@ -103,7 +103,7 @@ if vim.fn.executable("rg") then
 end
 
 vim.g.mapleader = " "  -- use space bar as leader key
-vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
+vim.keymap.set("n", "<space>", "<nop>")  -- disable space as a command
 
 -- prevent a preview buffer from opening when using omni completion
 vim.opt.completeopt = {"menu", 'menuone'}
@@ -119,10 +119,10 @@ vim.g.python3_host_prog = "~/.local/nvim-venv3/bin/python3"
 ----------------------------------------
 
 vim.g.tmux_navigator_no_mappings = true
-vim.api.nvim_set_keymap("n", "<m-h>", ":TmuxNavigateLeft<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<m-j>", ":TmuxNavigateDown<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<m-k>", ":TmuxNavigateUp<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<m-l>", ":TmuxNavigateRight<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<m-h>", "<cmd>TmuxNavigateLeft<cr>", { silent = true })
+vim.keymap.set("n", "<m-j>", "<cmd>TmuxNavigateDown<cr>", { silent = true })
+vim.keymap.set("n", "<m-k>", "<cmd>TmuxNavigateUp<cr>", { silent = true })
+vim.keymap.set("n", "<m-l>", "<cmd>TmuxNavigateRight<cr>", { silent = true })
 
 -------------------------
 ---- vimwiki/vimwiki ----
@@ -132,9 +132,9 @@ vim.g.vimwiki_list = {{ path = "~/Documents/notes/", syntax = "markdown", ext = 
 
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside
 -- a markdown file:
-vim.api.nvim_set_keymap("n", "<leader>w<leader>w", ":VimwikiMakeDiaryNote 1<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>wi", ":VimwikiDiaryIndex 1<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>ww", ":VimwikiIndex 1<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>w<leader>w", "<cmd>VimwikiMakeDiaryNote 1<cr>", { silent = true })
+vim.keymap.set("n", "<leader>wi", "<cmd>VimwikiDiaryIndex 1<cr>", { silent = true })
+vim.keymap.set("n", "<leader>ww", "<cmd>VimwikiIndex 1<cr>", { silent = true })
 
 ---------------------------------------
 ---- nvim-telescope/telescope.nvim ----
@@ -151,7 +151,7 @@ require("telescope").setup {
 }
 require("telescope").load_extension("fzf")  -- use fzf for fuzzy filtering
 
-vim.api.nvim_set_keymap("n", "<c-p>", "<cmd>Telescope find_files<cr>", { noremap = true })
+vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 
 -------------------------------
 ---- neovim/nvim-lspconfig ----
@@ -201,8 +201,10 @@ vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
 -- working for neovim v0.5 due to a bug: https://github.com/dense-analysis/ale/issues/3801
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
+vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>", { silent = true })
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
+  graphql = {},
 }
 vim.g.ale_fixers = {
   python = { "black" },
@@ -217,7 +219,6 @@ vim.g.ale_pattern_options = {
   [".md$"] = { ale_linters = {}, ale_fixers = {} },
 }
 
-vim.api.nvim_set_keymap("n", "<leader>p", ":ALEFix<cr>", { noremap = true, silent = true })
 ----------------------------
 ---- sirver/ultisnips ----
 ----------------------------
@@ -229,30 +230,29 @@ vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config")..'/ultisnips' }
 -------------
 
 -- Enable reloading config with <leader>R.
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n",
   "<leader>R",
-  [[:lua package.loaded.rbc = nil<cr>:source ~/.config/nvim/init.lua<cr>"]],
-  { noremap = true }
+  [[<cmd>lua package.loaded.rbc = nil<cr><cmd>source ~/.config/nvim/init.lua<cr>"]]
 )
 
-vim.api.nvim_set_keymap("n", "<leader><leader>", "<c-^>", { noremap = true })  -- alternate buffers
+vim.keymap.set("n", "<leader><leader>", "<c-^>")  -- alternate buffers
 
 -- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
-vim.api.nvim_set_keymap("n", "<C-l>", ":nohlsearch | set nospell<cr><c-l>", { noremap = true })
+vim.keymap.set("n", "<C-l>", "<cmd>nohlsearch | set nospell<cr><c-l>")
 
 -- Enable navigating through ale / vimwiki location lists using arrow keys.
-vim.api.nvim_set_keymap("n", "<left>", ":lpfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<right>", ":lnfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<up>", ":lprevious<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<down>", ":lnext<cr>", { noremap = true })
+vim.keymap.set("n", "<left>", "<cmd>lpfile<cr>")
+vim.keymap.set("n", "<right>", "<cmd>lnfile<cr>")
+vim.keymap.set("n", "<up>", "<cmd>lprevious<cr>")
+vim.keymap.set("n", "<down>", "<cmd>lnext<cr>")
 
 -- Enable navigating through quickfix lists using shift/alt + arrow keys.
-vim.api.nvim_set_keymap("n", "<s-left>", ":cpfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-right>", ":cnfile<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-up>", ":cprevious<cr>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<s-down>", ":cnext<cr>", { noremap = true })
+vim.keymap.set("n", "<s-left>", "<cmd>cpfile<cr>")
+vim.keymap.set("n", "<s-right>", "<cmd>cnfile<cr>")
+vim.keymap.set("n", "<s-up>", "<cmd>cprevious<cr>")
+vim.keymap.set("n", "<s-down>", "<cmd>cnext<cr>")
 
-vim.api.nvim_set_keymap("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { silent = true })
+vim.keymap.set("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>", { silent = true })
+vim.keymap.set("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { silent = true })
