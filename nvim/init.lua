@@ -105,6 +105,9 @@ end
 vim.g.mapleader = " "  -- use space bar as leader key
 vim.api.nvim_set_keymap("n", "<space>", "<nop>", { noremap = true })  -- disable space as a command
 
+-- prevent a preview buffer from opening when using omni completion
+vim.opt.completeopt = {"menu", 'menuone'}
+
 vim.g.python3_host_prog = "~/.local/nvim-venv3/bin/python3"
 
 -----------------------
@@ -167,6 +170,22 @@ require("lspconfig").pyright.setup(
     }
 )
 
+-- requires `npm install -g typescript-language-server`
+require("lspconfig").tsserver.setup(
+    {
+      on_attach = function(client, bufnr)
+        vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+        local opts = { buffer=0 }
+        vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
+        vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
+      end
+    }
+)
+
 -- Don't display diagnostics using lsp because pyright generates annoying
 -- hints which cannot be disabled through pyright or neovim lsp:
 -- https://github.com/neovim/nvim-lspconfig/issues/726
@@ -181,11 +200,16 @@ vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
 -- The g:ale_sign_column_always should prevent the text jumping but it is currently not
 -- working for neovim v0.5 due to a bug: https://github.com/dense-analysis/ale/issues/3801
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
+vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
 }
 vim.g.ale_fixers = {
   python = { "black" },
+  html = { "prettier" },
+  javascript = { "prettier", "eslint" },
+  typescript = { "prettier", "eslint" },
+  typescriptreact = { "prettier", "eslint" },
 }
 vim.g.ale_pattern_options = {
   -- Disable ale on markdown files because it interferes with vimwiki searches populating

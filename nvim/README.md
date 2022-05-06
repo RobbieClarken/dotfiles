@@ -13,6 +13,6 @@ nvim +PackerSync
 ### Language servers, linters and fixers
 
 ```bash
-npm install -g pyright
+npm install -g pyright typescript-language-server prettier
 pipx install black flake8
 ```
