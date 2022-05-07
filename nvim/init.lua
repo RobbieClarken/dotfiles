@@ -201,6 +201,7 @@ vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
 -- working for neovim v0.5 due to a bug: https://github.com/dense-analysis/ale/issues/3801
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
+vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning about missing config
 vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>", { silent = true })
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
