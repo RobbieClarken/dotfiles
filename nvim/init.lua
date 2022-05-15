@@ -131,10 +131,10 @@ vim.g.python3_host_prog = "~/.local/nvim-venv3/bin/python3"
 ----------------------------------------
 
 vim.g.tmux_navigator_no_mappings = true
-vim.keymap.set("n", "<m-h>", "<cmd>TmuxNavigateLeft<cr>", { silent = true })
-vim.keymap.set("n", "<m-j>", "<cmd>TmuxNavigateDown<cr>", { silent = true })
-vim.keymap.set("n", "<m-k>", "<cmd>TmuxNavigateUp<cr>", { silent = true })
-vim.keymap.set("n", "<m-l>", "<cmd>TmuxNavigateRight<cr>", { silent = true })
+vim.keymap.set("n", "<m-h>", "<cmd>TmuxNavigateLeft<cr>")
+vim.keymap.set("n", "<m-j>", "<cmd>TmuxNavigateDown<cr>")
+vim.keymap.set("n", "<m-k>", "<cmd>TmuxNavigateUp<cr>")
+vim.keymap.set("n", "<m-l>", "<cmd>TmuxNavigateRight<cr>")
 
 -------------------------
 ---- vimwiki/vimwiki ----
@@ -144,9 +144,9 @@ vim.g.vimwiki_list = {{ path = "~/Documents/notes/", syntax = "markdown", ext = 
 
 -- Prevent wikiwiki from creating a local `diary` folder when keymaps are run from inside
 -- a markdown file:
-vim.keymap.set("n", "<leader>w<leader>w", "<cmd>VimwikiMakeDiaryNote 1<cr>", { silent = true })
-vim.keymap.set("n", "<leader>wi", "<cmd>VimwikiDiaryIndex 1<cr>", { silent = true })
-vim.keymap.set("n", "<leader>ww", "<cmd>VimwikiIndex 1<cr>", { silent = true })
+vim.keymap.set("n", "<leader>w<leader>w", "<cmd>VimwikiMakeDiaryNote 1<cr>")
+vim.keymap.set("n", "<leader>wi", "<cmd>VimwikiDiaryIndex 1<cr>")
+vim.keymap.set("n", "<leader>ww", "<cmd>VimwikiIndex 1<cr>")
 
 ---------------------------------------
 ---- nvim-telescope/telescope.nvim ----
@@ -214,7 +214,7 @@ vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
 vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning about missing config
-vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>", { silent = true })
+vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>")
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
   graphql = {},
@@ -222,6 +222,7 @@ vim.g.ale_linters = {
 vim.g.ale_fixers = {
   python = { "black" },
   html = { "prettier" },
+  css = { "prettier" },
   javascript = { "prettier", "eslint" },
   typescript = { "prettier", "eslint" },
   typescriptreact = { "prettier", "eslint" },
@@ -236,7 +237,7 @@ vim.g.ale_pattern_options = {
 ---- sirver/ultisnips ----
 ----------------------------
 
-vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config")..'/ultisnips' }
+vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config").."/ultisnips" }
 
 -------------
 -- KEYMAPS --
@@ -246,7 +247,7 @@ vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config")..'/ultisnips' }
 vim.keymap.set(
   "n",
   "<leader>R",
-  [[<cmd>lua package.loaded.rbc = nil<cr><cmd>source ~/.config/nvim/init.lua<cr>"]]
+  "<cmd>lua package.loaded.rbc = nil<cr><cmd>source ~/.config/nvim/init.lua<cr><cmd>echo 'config reloaded'<cr>"
 )
 
 vim.keymap.set("n", "<leader><leader>", "<c-^>")  -- alternate buffers
@@ -266,6 +267,6 @@ vim.keymap.set("n", "<s-right>", "<cmd>cnfile<cr>")
 vim.keymap.set("n", "<s-up>", "<cmd>cprevious<cr>")
 vim.keymap.set("n", "<s-down>", "<cmd>cnext<cr>")
 
-vim.keymap.set("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>", { silent = true })
-vim.keymap.set("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>", { silent = true })
-vim.keymap.set("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>", { silent = true })
+vim.keymap.set("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>")
+vim.keymap.set("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>")
+vim.keymap.set("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>")
