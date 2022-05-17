@@ -1,6 +1,7 @@
 [user]
 	name = RobbieClarken
 	email = robbie.clarken@gmail.com
+	signingkey = 6B82C4403AE81DC1ADF2DF5FB87B9D1BBD1CDF51
 [color]
 	ui = true
 [core]
@@ -27,6 +28,7 @@
 	prune = true
 [merge]
 	ff = only
+	conflictStyle = diff3
 [push]
 	default = simple
 [diff "sopsdiffer"]
@@ -35,3 +37,5 @@
 	insteadOf = git://
 [init]
 	defaultBranch = master
+[commit]
+	gpgsign = true
