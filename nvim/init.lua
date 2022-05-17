@@ -39,6 +39,7 @@ require("packer").startup(function()
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
   use "neovim/nvim-lspconfig"  -- configuration for built-in lsp client
+  use "jose-elias-alvarez/typescript.nvim"  -- extra typescript lsp functionality
   use "dense-analysis/ale"  -- asynchronous linter
 
   if packer_bootstrap then
@@ -182,21 +183,26 @@ require("lspconfig").pyright.setup(
     }
 )
 
+--------------------------------------------
+---- jose-elias-alvarez/typescript.nvim ----
+--------------------------------------------
+
 -- requires `npm install -g typescript-language-server`
-require("lspconfig").tsserver.setup(
-    {
-      on_attach = function(client, bufnr)
-        vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
-        local opts = { buffer=0 }
-        vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
-        vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
-      end
-    }
-)
+require("typescript").setup({
+  server = { -- pass options to lspconfig's setup method
+    on_attach = function(client, bufnr)
+      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+      local opts = { buffer=0 }
+      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "<leader>ri", "<cmd>TypescriptAddMissingImports<cr>", opts)
+      vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
+      vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
+      vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
+    end
+  },
+})
 
 -- Don't display diagnostics using lsp because pyright generates annoying
 -- hints which cannot be disabled through pyright or neovim lsp:
