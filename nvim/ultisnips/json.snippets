@@ -1,35 +1,52 @@
-snippet py
+snippet react
 {
-	"src/$1/*.py": {
-		"alternate": "tests/test_{}.py"
+	"name": "app",
+	"version": "0.0.0",
+	"private": true,
+	"dependencies": {
+		"react": "*",
+		"react-dom": "*",
+		"react-scripts": "*",
+		"@types/node": "*",
+		"@types/react": "*",
+		"@types/react-dom": "*",
+		"typescript": "*"
 	},
-	"tests/test_*.py": {
-		"alternate": "src/$1/{}.py"
+	"scripts": {
+		"start": "react-scripts start"
+	},
+	"browserslist": {
+		"development": ["last 1 firefox version"],
+		"production": ["last 1 firefox version"]
 	}
 }
 endsnippet
 
-
-snippet react
+snippet tsconfig
 {
-	"src/components/*.js": {
-		"alternate": "src/tests/components/{}.test.js"
+	"compilerOptions": {
+		"target": "es5",
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx"
 	},
-	"src/tests/components/*.test.js": {
-		"alternate": "src/components/{}.js",
-		"template": [
-			"import React from 'react'",
-			"import {open} mount {close} from 'enzyme'",
-			"",
-			"import {} from '../../components/{}'",
-			"",
-			"",
-			"describe('<{} />', () => {",
-			"  it('', () => {open}",
-			"    const component = mount(<{} />)",
-			"  {close})",
-			"{close})"
-		]
-	}
+	"include": [
+		"src"
+	]
 }
 endsnippet
