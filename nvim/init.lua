@@ -56,6 +56,7 @@ vim.opt.ignorecase = true  -- make search case-insensitive
 vim.opt.smartcase = true  -- if search term contains capital letter, make search case-sensitive
 vim.opt.clipboard = "unnamed"  -- use system clipboard as main register for yank/put/delete
 vim.opt.hidden = true  -- allow switching buffers without saving
+vim.opt.wildmode = { "longest", "list" }  -- Make tab in command-line mode behave like in bash
 vim.opt.wrap = false  -- disable text wrapping
 vim.opt.formatoptions = "qj"  -- don't auto text wrap; do remove comment leader when joining lines
 vim.opt.textwidth = 90  -- used for formatting text with gq
@@ -75,6 +76,7 @@ vim.opt.shortmess = vim.opt.shortmess + "A"
 
 -- Configure to use base16 colour scheme.
 vim.g.base16colorspace = 256
+vim.opt.termguicolors = true
 if vim.fn.filereadable(vim.fn.expand("~/.vimrc_background")) then
   vim.cmd("source ~/.vimrc_background")
 end
