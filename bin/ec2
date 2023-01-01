@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -eu
 
-readonly AMI=${TEMP_EC2_AMI:-ami-0b8b10b5bf11f3a22}
+readonly REGION=${TEMP_EC2_REGION:-ap-southeast-2}
+readonly AMI=${TEMP_EC2_AMI:-ami-026b57f3c383c2eec}
 readonly SSH_KEY=${TEMP_EC2_SSH_KEY:-robbie-kj}
 readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-01e7bfb66c0bddfc2}
 readonly SSH_KEY_FILE=$HOME/.ssh/id_temp_ec2
 
 do_start() {
   aws ec2 run-instances \
+    --region "$REGION" \
     --image-id "$AMI" \
     --count 1 \
     --instance-type t2.micro \
@@ -39,12 +41,17 @@ do_ip() {
 
 do_stop() {
   id=$(instance | jq -r '.InstanceId')
-  aws ec2 terminate-instances --instance-ids "$id"
+  aws ec2 terminate-instances \
+    --region "$REGION" \
+    --instance-ids "$id"
 }
 
 instance() {
   aws ec2 describe-instances \
-    --filters Name=tag:Name,Values=temp \
+    --region "$REGION" \
+    --filters \
+      Name=tag:Name,Values=temp \
+      Name=instance-state-name,Values=pending,running \
   | jq '.Reservations[0]|.Instances[0]'
 }
 

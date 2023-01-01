@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Removes comments from tsconfig.json file.
+# Dependencies:
+# - `brew install jq moreutils`
+# - `npm install --global json5`
+
+path="${1:-tsconfig.json}"
+if [[ -e "$path" ]]; then
+  json5 "$path" | jq . | sponge "$path"
+else
+  echo "$path not found"
+  exit 1
+fi

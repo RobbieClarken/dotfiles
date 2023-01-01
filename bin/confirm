@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -eu
+read -rp 'This could be dangerous! Continue? ' && [[ $REPLY = "y" ]] && "$@"
