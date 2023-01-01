@@ -15,4 +15,6 @@ nvim +PackerSync
 ```bash
 npm install -g pyright typescript-language-server prettier
 pipx install black flake8
+rustup +nightly component add rustfmt rust-analyzer-preview
+ln -s ~/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rust-analyzer ~/.local/bin/
 ```

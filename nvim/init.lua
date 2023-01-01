@@ -28,6 +28,7 @@ require("packer").startup(function()
   use "vim-scripts/ReplaceWithRegister"  -- replace text with what is in the register
   use "vimwiki/vimwiki"  -- personal wiki and diary
   use "sirver/ultisnips"  -- code snippets manager
+  use "mattn/emmet-vim"  -- generate html from css-like expressions
   use "chriskempson/base16-vim"  -- add support for base16 colour schemes
   use "jparise/vim-graphql"  -- syntax highlighting for GraphQL
 
@@ -173,16 +174,47 @@ vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 -------------------------------
 
 require("lspconfig").pyright.setup(
-    {
-      on_attach = function(client, bufnr)
-        vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
-        local opts = { buffer=0 }
-        vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
-      end
+  {
+    on_attach = function(client, bufnr)
+      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+      local opts = { buffer=0 }
+      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+    end
+  }
+)
+
+require("lspconfig").rust_analyzer.setup(
+  {
+    on_attach = function(client, bufnr)
+      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+      local opts = { buffer=0 }
+      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+    end,
+    settings = {
+      ["rust-analyzer"] = {
+        imports = {
+          granularity = {
+            group = "module",
+          },
+          prefix = "self",
+        },
+        cargo = {
+          buildScripts = {
+            enable = true,
+          },
+        },
+        procMacro = {
+          enable = true
+        },
+      }
     }
+  }
 )
 
 --------------------------------------------
@@ -198,9 +230,20 @@ require("typescript").setup({
       vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
       vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
       vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-      vim.keymap.set("n", "<leader>ri", "<cmd>TypescriptAddMissingImports<cr>", opts)
-      vim.keymap.set("n", "<leader>rf", vim.lsp.buf.references, opts)
+      vim.keymap.set(
+        "n",
+        "<leader>ri",
+        "<cmd>TypescriptAddMissingImports<cr><cmd>ALEFix<cr>",
+        opts
+      )
+      vim.keymap.set(
+        "n",
+        "<leader>ru",
+        "<cmd>TypescriptRemoveUnused<cr><cmd>ALEFix<cr>",
+        opts
+      )
       vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
+      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
       vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
     end
   },
@@ -222,18 +265,21 @@ vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
 vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning about missing config
+vim.g.ale_rust_cargo_use_clippy = 1
 vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>")
 vim.g.ale_linters = {
   python = { "flake8", "mypy" },
   graphql = {},
+  rust = { "cargo" }
 }
 vim.g.ale_fixers = {
   python = { "black" },
   html = { "prettier" },
   css = { "prettier" },
-  javascript = { "prettier", "eslint" },
-  typescript = { "prettier", "eslint" },
-  typescriptreact = { "prettier", "eslint" },
+  javascript = { "eslint", "prettier" },
+  typescript = { "eslint", "prettier" },
+  typescriptreact = { "eslint", "prettier" },
+  rust = { "rustfmt" },
 }
 vim.g.ale_pattern_options = {
   -- Disable ale on markdown files because it interferes with vimwiki searches populating
@@ -246,6 +292,12 @@ vim.g.ale_pattern_options = {
 ----------------------------
 
 vim.g.UltiSnipsSnippetDirectories = { vim.fn.stdpath("config").."/ultisnips" }
+
+-------------------------
+---- mattn/emmet-vim ----
+-------------------------
+
+vim.g.user_emmet_expandabbr_key = "<c-e>"
 
 -------------
 -- KEYMAPS --
@@ -270,11 +322,16 @@ vim.keymap.set("n", "<up>", "<cmd>lprevious<cr>")
 vim.keymap.set("n", "<down>", "<cmd>lnext<cr>")
 
 -- Enable navigating through quickfix lists using shift/alt + arrow keys.
-vim.keymap.set("n", "<s-left>", "<cmd>cpfile<cr>")
-vim.keymap.set("n", "<s-right>", "<cmd>cnfile<cr>")
-vim.keymap.set("n", "<s-up>", "<cmd>cprevious<cr>")
-vim.keymap.set("n", "<s-down>", "<cmd>cnext<cr>")
+vim.keymap.set("n", "<s-left>", "<cmd>cpfile<cr>zz")
+vim.keymap.set("n", "<s-right>", "<cmd>cnfile<cr>zz")
+vim.keymap.set("n", "<s-up>", "<cmd>cprevious<cr>zz")
+vim.keymap.set("n", "<s-down>", "<cmd>cnext<cr>zz")
 
-vim.keymap.set("n", "<leader>f", "<cmd>lua require('rbc').copy_path()<cr>")
-vim.keymap.set("n", "<leader>gg", "<cmd>lua require('rbc').copy_python_path()<cr>")
-vim.keymap.set("n", "<leader>t", "<cmd>lua require('rbc').build_pytest_command()<cr>")
+vim.keymap.set("n", "<leader>f", require('rbc').copy_path)
+vim.keymap.set("n", "<leader>gg", require('rbc').copy_python_path)
+vim.keymap.set("n", "<leader>t", require('rbc').build_pytest_command)
+
+vim.keymap.set("n", "<leader>T", "<cmd>Telescope<cr>")
+
+-- Select what was just pasted.
+vim.keymap.set("n", "gp", "`[v`]")
