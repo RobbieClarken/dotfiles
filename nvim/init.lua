@@ -39,7 +39,11 @@ require("packer").startup(function()
   }
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
-  use "neovim/nvim-lspconfig"  -- configuration for built-in lsp client
+  use {
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
+  }
   use "jose-elias-alvarez/typescript.nvim"  -- extra typescript lsp functionality
   use "dense-analysis/ale"  -- asynchronous linter
 
@@ -169,53 +173,41 @@ require("telescope").load_extension("fzf")  -- use fzf for fuzzy filtering
 
 vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 
+-------------------------------------------
+---- williamboman/mason-lspconfig.nvim ----
+-------------------------------------------
+
+require("mason").setup()
+require("mason-lspconfig").setup({
+  ensure_installed = { "sumneko_lua" },
+})
+
 -------------------------------
 ---- neovim/nvim-lspconfig ----
 -------------------------------
 
-require("lspconfig").pyright.setup(
-  {
-    on_attach = function(client, bufnr)
-      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
-      local opts = { buffer=0 }
-      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-    end
-  }
-)
+local on_attach = function(client, bufnr)
+  vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+  local opts = { buffer = bufnr }
+  vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+  vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+  vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
+  vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+  vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
+  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+  vim.diagnostic.disable(0)
+end
 
-require("lspconfig").rust_analyzer.setup(
-  {
-    on_attach = function(client, bufnr)
-      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
-      local opts = { buffer=0 }
-      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-    end,
-    settings = {
-      ["rust-analyzer"] = {
-        imports = {
-          granularity = {
-            group = "module",
-          },
-          prefix = "self",
-        },
-        cargo = {
-          buildScripts = {
-            enable = true,
-          },
-        },
-        procMacro = {
-          enable = true
-        },
-      }
-    }
-  }
-)
+require("lspconfig").pyright.setup({ on_attach = on_attach })
+require("lspconfig").rust_analyzer.setup({ on_attach = on_attach })
+require("lspconfig").sumneko_lua.setup({
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    vim.diagnostic.enable(bufnr)
+  end
+})
 
 --------------------------------------------
 ---- jose-elias-alvarez/typescript.nvim ----
@@ -225,11 +217,8 @@ require("lspconfig").rust_analyzer.setup(
 require("typescript").setup({
   server = { -- pass options to lspconfig's setup method
     on_attach = function(client, bufnr)
-      vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
-      local opts = { buffer=0 }
-      vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+      on_attach(client, bufnr)
+      local opts = { buffer = bufnr }
       vim.keymap.set(
         "n",
         "<leader>ri",
@@ -242,26 +231,16 @@ require("typescript").setup({
         "<cmd>TypescriptRemoveUnused<cr><cmd>ALEFix<cr>",
         opts
       )
-      vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, opts)
-      vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-      vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
     end
   },
 })
-
--- Don't display diagnostics using lsp because pyright generates annoying
--- hints which cannot be disabled through pyright or neovim lsp:
--- https://github.com/neovim/nvim-lspconfig/issues/726
--- https://github.com/microsoft/pyright/issues/1541
-vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
 
 ----------------------------
 ---- dense-analysis/ale ----
 ----------------------------
 
+vim.g.ale_floating_preview = 1  -- use floating window to display hover information
 vim.g.ale_sign_error = "✗✗"  -- make error indicator look prettier
--- The g:ale_sign_column_always should prevent the text jumping but it is currently not
--- working for neovim v0.5 due to a bug: https://github.com/dense-analysis/ale/issues/3801
 vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
 vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning about missing config
@@ -286,6 +265,7 @@ vim.g.ale_pattern_options = {
   -- the location list.
   [".md$"] = { ale_linters = {}, ale_fixers = {} },
 }
+vim.keymap.set("n", "<leader>d", "<cmd>ALEDetail<cr>")  -- alternate buffers
 
 ----------------------------
 ---- sirver/ultisnips ----
