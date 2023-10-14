@@ -1,7 +1,27 @@
 snippet fc
-const ${1:Component}: React.FC = () => {
+const ${1:Component}: FC = () => {
 	return (
 		${0:null}
 	);
 }
+endsnippet
+
+snippet demo
+import { Button, Container, Stack } from "@mui/material";
+
+import type { Page } from "./_app";
+
+const DemoPage: Page = () => {
+	return (
+		<Container maxWidth="md">
+			<Stack>
+				<Button variant="outlined">Works!</Button>
+			</Stack>
+		</Container>
+	);
+};
+
+DemoPage.getLayout = (page) => page;
+
+export default DemoPage;
 endsnippet
