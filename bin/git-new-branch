@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -eu
+
+git fetch origin master:master
+git checkout -b "$1" origin/master
