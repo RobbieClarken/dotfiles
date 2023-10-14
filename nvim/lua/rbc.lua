@@ -16,19 +16,27 @@ function copy_python_path()
   print("copied: " .. py_import_command)
 end
 
-function build_pytest_command()
-  local project_uses_coverage = (
-    vim.fn.filereadable(".coveragerc") == 1
-    or vim.fn.filereadable(".coverage") == 1
-  )
+function build_test_command()
   local file_path = vim.fn.fnamemodify(vim.fn.expand("%"), ":~:.")
-  local test_name = vim.fn.expand("<cword>")
-  local command = (
-    "pytest -x --ff "
-    .. (project_uses_coverage and "--no-cov " or "")
-    .. file_path 
-    ..  " -k " .. test_name
-  )
+  local command
+  if (vim.fn.filereadable("package.json") == 1) then
+    command = (
+      "npm run test -- --watch "
+      .. file_path
+    )
+  else
+    local project_uses_coverage = (
+      vim.fn.filereadable(".coveragerc") == 1
+      or vim.fn.filereadable(".coverage") == 1
+    )
+    local test_name = vim.fn.expand("<cword>")
+    command = (
+      "pytest -x --ff "
+      .. (project_uses_coverage and "--no-cov " or "")
+      .. file_path
+      ..  " -k " .. test_name
+    )
+  end
   vim.fn.setreg("*", command)
   print("copied: " .. command)
 end
@@ -36,6 +44,6 @@ end
 
 rbc.copy_path = copy_path
 rbc.copy_python_path = copy_python_path
-rbc.build_pytest_command = build_pytest_command
+rbc.build_test_command = build_test_command
 
 return rbc
