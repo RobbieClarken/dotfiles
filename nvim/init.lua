@@ -239,7 +239,6 @@ require("null-ls").setup({
 ---- jose-elias-alvarez/typescript.nvim ----
 --------------------------------------------
 
--- requires `npm install -g typescript-language-server`
 require("typescript").setup({
   server = { -- pass options to lspconfig's setup method
     on_attach = function(client, bufnr)
