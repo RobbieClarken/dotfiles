@@ -257,9 +257,9 @@ require("typescript").setup({
         opts
       )
     end,
+    root_dir = lspconfig.util.root_pattern("package.json"),
+    single_file_support = false
   },
-  root_dir = lspconfig.util.root_pattern("package.json"),
-  single_file_support = false
 })
 
 ----------------------------
@@ -272,6 +272,8 @@ vim.g.ale_sign_column_always = 1  -- prevent text jumping around
 vim.g.ale_javascript_prettier_use_global = 1  -- use globally installed prettier
 vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning about missing config
 vim.g.ale_rust_cargo_use_clippy = 1
+vim.g.ale_use_neovim_diagnostics_api = 0
+vim.g.ale_disable_lsp = 0
 vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>")
 vim.g.ale_linters = {
   graphql = {},
