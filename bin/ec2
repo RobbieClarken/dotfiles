@@ -2,7 +2,7 @@
 set -eu
 
 readonly REGION=${TEMP_EC2_REGION:-ap-southeast-2}
-readonly AMI=${TEMP_EC2_AMI:-ami-026b57f3c383c2eec}
+readonly AMI=${TEMP_EC2_AMI:-ami-0d9f286195031c3d9}
 readonly SSH_KEY=${TEMP_EC2_SSH_KEY:-robbie-kj}
 readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-01e7bfb66c0bddfc2}
 readonly SSH_KEY_FILE=$HOME/.ssh/id_temp_ec2
