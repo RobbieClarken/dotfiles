@@ -39,6 +39,15 @@ require("packer").startup(function()
   }
   use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
+  use { "nvim-telescope/telescope-ui-select.nvim" }  -- use telescope for lsp code actions menu
+
+  -- use neovim as a language server
+  -- (used to inject code actions provided by jose-elias-alvarez/typescript.nvim)
+  use {
+    "jose-elias-alvarez/null-ls.nvim",
+    requires = { { "nvim-lua/plenary.nvim" } }
+  }
+
   use {
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
@@ -170,6 +179,7 @@ require("telescope").setup {
   },
 }
 require("telescope").load_extension("fzf")  -- use fzf for fuzzy filtering
+require("telescope").load_extension("ui-select")
 
 vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 
@@ -179,7 +189,7 @@ vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "sumneko_lua" },
+  ensure_installed = { "lua_ls" },
 })
 
 -------------------------------
@@ -200,13 +210,29 @@ local on_attach = function(client, bufnr)
   vim.diagnostic.disable(0)
 end
 
-require("lspconfig").pyright.setup({ on_attach = on_attach })
-require("lspconfig").rust_analyzer.setup({ on_attach = on_attach })
-require("lspconfig").sumneko_lua.setup({
+local lspconfig = require("lspconfig")
+lspconfig.pyright.setup({ on_attach = on_attach })
+lspconfig.rust_analyzer.setup({ on_attach = on_attach })
+lspconfig.lua_ls.setup({
   on_attach = function(client, bufnr)
     on_attach(client, bufnr)
     vim.diagnostic.enable(bufnr)
   end
+})
+lspconfig.denols.setup({
+  on_attach = on_attach,
+  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+})
+
+-----------------------------------------
+---- jose-elias-alvarez/null-ls.nvim ----
+-----------------------------------------
+
+require("null-ls").setup({
+  sources = {
+    -- add code actions provided by jose-elias-alvarez/typescript.nvim 
+    require("typescript.extensions.null-ls.code-actions"),
+  },
 })
 
 --------------------------------------------
@@ -231,8 +257,10 @@ require("typescript").setup({
         "<cmd>TypescriptRemoveUnused<cr><cmd>ALEFix<cr>",
         opts
       )
-    end
+    end,
   },
+  root_dir = lspconfig.util.root_pattern("package.json"),
+  single_file_support = false
 })
 
 ----------------------------
@@ -247,18 +275,24 @@ vim.g.ale_javascript_eslint_suppress_missing_config = 1  -- suppress warning abo
 vim.g.ale_rust_cargo_use_clippy = 1
 vim.keymap.set("n", "<leader>p", "<cmd>ALEFix<cr>")
 vim.g.ale_linters = {
-  python = { "flake8", "mypy" },
   graphql = {},
-  rust = { "cargo" }
+  html = {},
+  javascript = { "eslint" },
+  python = { "flake8", "mypy" },
+  rust = { "cargo" },
+  typescript = { "eslint", "tsserver" },
+  typescriptreact = { "eslint", "tsserver" },
 }
 vim.g.ale_fixers = {
-  python = { "black" },
-  html = { "prettier" },
   css = { "prettier" },
+  html = { "prettier" },
   javascript = { "eslint", "prettier" },
+  python = { "black" },
+  -- if rust rustfmt is not working create a `.rustfmt.toml` file with `edition = "2021"`
+  -- (set edition to what is in `Cargo.toml`)
+  rust = { "rustfmt" },
   typescript = { "eslint", "prettier" },
   typescriptreact = { "eslint", "prettier" },
-  rust = { "rustfmt" },
 }
 vim.g.ale_pattern_options = {
   -- Disable ale on markdown files because it interferes with vimwiki searches populating
@@ -266,6 +300,17 @@ vim.g.ale_pattern_options = {
   [".md$"] = { ale_linters = {}, ale_fixers = {} },
 }
 vim.keymap.set("n", "<leader>d", "<cmd>ALEDetail<cr>")  -- alternate buffers
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  group = vim.api.nvim_create_augroup("Deno", {}),
+  pattern = {"*.ts"},
+  callback = function()
+    if (vim.fn.filereadable("deno.json") == 1) then
+      vim.b.ale_linters = { typescript = { "deno" } }
+      vim.b.ale_fixers = { typescript = { "deno" } }
+    end
+  end,
+})
 
 ----------------------------
 ---- sirver/ultisnips ----
@@ -315,3 +360,8 @@ vim.keymap.set("n", "<leader>T", "<cmd>Telescope<cr>")
 
 -- Select what was just pasted.
 vim.keymap.set("n", "gp", "`[v`]")
+
+-- Make * and # respect smartcase
+-- https://vi.stackexchange.com/a/4055
+vim.keymap.set("n", "*", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<CR>:let v:searchforward=1<CR>n")
+vim.keymap.set("n", "#", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<CR>:let v:searchforward=0<CR>n")
