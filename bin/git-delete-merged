@@ -19,7 +19,7 @@ confirm () {
 delete_local_merged_braches () {
   branches=$(
     git branch --format='%(refname:short)' --merged origin/master \
-      | grep -Ev '(master|development)' \
+      | grep -Ev '(master|development|HEAD)' \
       || true
   )
   echo
