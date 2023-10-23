@@ -13,6 +13,7 @@ nvim +PackerSync
 ### Language servers, linters and fixers
 
 ```bash
+nvim +'MasonInstall typescript-language-server'
 npm install -g pyright prettier
 pipx install black flake8
 rustup +nightly component add rustfmt rust-analyzer-preview

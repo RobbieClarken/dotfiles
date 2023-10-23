@@ -1,3 +1,8 @@
+-- Speed up loading Lua modules by enabling the experimental loader
+if vim.loader then
+  vim.loader.enable()
+end
+
 -------------
 -- PLUGINS --
 -------------
@@ -31,6 +36,7 @@ require("packer").startup(function()
   use "mattn/emmet-vim"  -- generate html from css-like expressions
   use "chriskempson/base16-vim"  -- add support for base16 colour schemes
   use "jparise/vim-graphql"  -- syntax highlighting for GraphQL
+  use "github/copilot.vim"  -- add support for GitHub Copilot
 
   -- fuzzy search all the things
   use {
