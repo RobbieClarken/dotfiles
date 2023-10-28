@@ -143,8 +143,6 @@ vim.keymap.set("n", "<space>", "<nop>")  -- disable space as a command
 -- prevent a preview buffer from opening when using omni completion
 vim.opt.completeopt = {"menu", 'menuone'}
 
-vim.g.python3_host_prog = "~/.local/nvim-venv3/bin/python3"
-
 -----------------------
 -- CUSTOMISE PLUGINS --
 -----------------------
