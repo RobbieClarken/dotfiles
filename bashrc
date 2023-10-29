@@ -1,5 +1,7 @@
-# Enable ctrl-s and ctrl-q
-stty -ixon -ixoff
+if shopt -q login_shell; then
+  # Enable ctrl-s and ctrl-q
+  stty -ixon -ixoff
+fi
 
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] \
