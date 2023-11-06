@@ -7,6 +7,7 @@ end
 -- PLUGINS --
 -------------
 
+local packer_bootstrap = nil;
 local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   packer_bootstrap = vim.fn.system({
@@ -19,7 +20,7 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   })
 end
 
-require("packer").startup(function()
+require("packer").startup(function(use)
   use "wbthomason/packer.nvim"  -- allow packer to update itself
   use "wincent/terminus"  -- mouse support, reload on focus, handle window resize
   use "christoomey/vim-tmux-navigator"  -- enable navigating between vim splits and tmux panes
@@ -198,14 +199,19 @@ vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "lua_ls" },
+  ensure_installed = {
+    "lua_ls",
+    "pyright",
+    "rust_analyzer",
+    "tsserver"
+  },
 })
 
 -------------------------------
 ---- neovim/nvim-lspconfig ----
 -------------------------------
 
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
   local opts = { buffer = bufnr }
   vim.keymap.set("n", "<c-]>", vim.lsp.buf.definition, opts)
@@ -216,7 +222,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
   vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, opts)
   vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-  vim.diagnostic.disable(0)
+  vim.diagnostic.disable(bufnr)
 end
 
 local lspconfig = require("lspconfig")
@@ -226,7 +232,13 @@ lspconfig.lua_ls.setup({
   on_attach = function(client, bufnr)
     on_attach(client, bufnr)
     vim.diagnostic.enable(bufnr)
-  end
+  end,
+  settings = {
+    Lua = {
+      diagnostics = { globals = { "vim" } },
+      workspace = { library = { [vim.fn.expand("$VIMRUNTIME/lua")] = true } },
+    },
+  },
 })
 lspconfig.denols.setup({
   on_attach = on_attach,

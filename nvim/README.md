@@ -10,10 +10,9 @@ python3 -m venv ~/.local/share/nvim/python3-venv
 nvim +PackerSync
 ```
 
-### Language servers, linters and fixers
+### Linters and fixers
 
 ```bash
-nvim +'MasonInstall typescript-language-server pyright prettier black flake8'
-rustup +nightly component add rustfmt rust-analyzer-preview
-ln -s ~/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rust-analyzer ~/.local/bin/
+nvim --headless -c 'MasonInstall prettier black flake8' -c qall
+rustup component add rustfmt
 ```
