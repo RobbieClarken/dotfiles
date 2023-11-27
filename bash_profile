@@ -47,10 +47,7 @@ if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
   setxkbmap -option ctrl:nocaps
 fi
 
-if [ -f "$HOME/.pyenv/bin/pyenv" ]; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
+if hash pyenv 2>/dev/null; then
   eval "$(pyenv init -)"
 fi
 
