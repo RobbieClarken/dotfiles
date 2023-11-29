@@ -26,6 +26,7 @@ PATH=$HOME/.cargo/bin:$PATH
 PATH=$HOME/.poetry/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH
+PATH=$HOMEBREW_PREFIX/opt/gawk/libexec/gnubin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/grep/libexec/gnubin:$PATH
 PATH=$N_PREFIX/bin:$PATH
 export PATH

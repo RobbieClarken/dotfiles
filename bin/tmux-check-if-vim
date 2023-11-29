@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+# Helper script for vim-tmux-navigator. Should exit 0 if the current pane is running vim,
+# 1 otherwise.
+#
+# The following should be added to `tmux.conf` to configure tmux use this script to
+# determine whether to foward keys to vim:
+#
+# ```tmux
+# is_vim="tmux-check-if-vim #{pane_tty}"
+# bind-key -n M-h if-shell "$is_vim" "send-keys M-h" "select-pane -L"
+# bind-key -n M-j if-shell "$is_vim" "send-keys M-j" "select-pane -D"
+# bind-key -n M-k if-shell "$is_vim" "send-keys M-k" "select-pane -U"
+# bind-key -n M-l if-shell "$is_vim" "send-keys M-l" "select-pane -R"
+# ```
+#
+# Requirements:
+# - gnu awk
+# - gnu grep
+# - pstree
+
 set -eu
 
 pane_tty=$1
