@@ -293,6 +293,7 @@ vim.g.ale_fixers = {
   css = { "prettier" },
   html = { "prettier" },
   javascript = { "eslint", "prettier" },
+  lua = { "stylua" },
   python = { "black" },
   -- if rust rustfmt is not working create a `.rustfmt.toml` file with `edition = "2021"`
   -- (set edition to what is in `Cargo.toml`)
