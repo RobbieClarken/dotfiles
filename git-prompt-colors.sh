@@ -1,4 +1,4 @@
-# shellcheck disable=SC2034,SC2154
+# shellcheck disable=SC2148,SC2034,SC2154
 
 override_git_prompt_colors () {
   GIT_PROMPT_COMMAND_OK=""
