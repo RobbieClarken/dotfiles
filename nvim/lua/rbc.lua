@@ -27,4 +27,14 @@ function rbc.build_test_command()
   print("copied: " .. command)
 end
 
+function rbc.copilot_toggle()
+  if vim.g.copilot_enabled == 0 then
+    vim.cmd("Copilot enable")
+    print("copilot enabled")
+  else
+    vim.cmd("Copilot disable")
+    print("copilot disabled")
+  end
+end
+
 return rbc

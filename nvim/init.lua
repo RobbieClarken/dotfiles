@@ -359,8 +359,10 @@ vim.keymap.set("n", "<s-right>", "<cmd>cnfile<cr>zz")
 vim.keymap.set("n", "<s-up>", "<cmd>cprevious<cr>zz")
 vim.keymap.set("n", "<s-down>", "<cmd>cnext<cr>zz")
 
-vim.keymap.set("n", "<leader>f", require("rbc").copy_path)
-vim.keymap.set("n", "<leader>t", require("rbc").build_test_command)
+local rbc = require("rbc")
+vim.keymap.set("n", "<leader>f", rbc.copy_path)
+vim.keymap.set("n", "<leader>t", rbc.build_test_command)
+vim.keymap.set("n", "yoa", rbc.copilot_toggle)
 
 vim.keymap.set("n", "<leader>T", "<cmd>Telescope<cr>")
 
