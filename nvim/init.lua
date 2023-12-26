@@ -7,7 +7,7 @@ end
 -- PLUGINS --
 -------------
 
-local packer_bootstrap = nil;
+local packer_bootstrap
 local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   packer_bootstrap = vim.fn.system({
@@ -235,8 +235,8 @@ lspconfig.lua_ls.setup({
   end,
   settings = {
     Lua = {
-      diagnostics = { globals = { "vim" } },
-      workspace = { library = { [vim.fn.expand("$VIMRUNTIME/lua")] = true } },
+      runtime = { version = "LuaJIT" },
+      workspace = { library = { vim.env.VIMRUNTIME } },
     },
   },
 })
@@ -360,7 +360,7 @@ vim.keymap.set(
 vim.keymap.set("n", "<leader><leader>", "<c-^>")  -- alternate buffers
 
 -- Use <c-l> to clear search highlighting, turn off spell checking and redraw the screen.
-vim.keymap.set("n", "<C-l>", "<cmd>nohlsearch | set nospell<cr><c-l>")
+vim.keymap.set("n", "<c-l>", "<cmd>nohlsearch | set nospell<cr><c-l>")
 
 -- Enable navigating through ale / vimwiki location lists using arrow keys.
 vim.keymap.set("n", "<left>", "<cmd>lpfile<cr>")
@@ -384,5 +384,5 @@ vim.keymap.set("n", "gp", "`[v`]")
 
 -- Make * and # respect smartcase
 -- https://vi.stackexchange.com/a/4055
-vim.keymap.set("n", "*", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<CR>:let v:searchforward=1<CR>n")
-vim.keymap.set("n", "#", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<CR>:let v:searchforward=0<CR>n")
+vim.keymap.set("n", "*", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<cr>:let v:searchforward=1<cr>n")
+vim.keymap.set("n", "#", ":let @/='\\C\\<' . expand('<cword>') . '\\>'<cr>:let v:searchforward=0<cr>n")
