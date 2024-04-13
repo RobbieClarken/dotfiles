@@ -15,10 +15,13 @@ if [ -f /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+if [ -f /opt/homebrew/bin/luarocks ]; then
+  eval "$(luarocks path)"
+fi
+
 PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
 PATH=$HOME/Developer/bin:$PATH
 PATH=$HOME/.dotfiles/bin:$PATH
-PATH=.git/safe/../../bin:$PATH
 PATH=$GOPATH/bin:$PATH
 PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH
 PATH=$HOME/.local/bin:$PATH
