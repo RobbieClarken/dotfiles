@@ -4,9 +4,10 @@ if shopt -q login_shell; then
 fi
 
 BASE16_SHELL=$HOME/.config/base16-shell/
+# shellcheck source=/dev/null
 [ -n "$PS1" ] \
   && [ -s "$BASE16_SHELL/profile_helper.sh" ] \
-  && eval "$("$BASE16_SHELL/profile_helper.sh")"
+  && source "$BASE16_SHELL/profile_helper.sh"
 
 # shellcheck disable=SC2034
 GIT_PROMPT_THEME=Custom

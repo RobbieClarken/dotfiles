@@ -10,7 +10,8 @@ readonly BASE16_LINK=$HOME/.base16_theme
 mapfile -t NAMES < <(
   echo "${BASE16_SCRIPTS}/base16-"*.sh | grep -oP '(?<=scripts/base16-)[^\.]+'
 )
-eval "$("$BASE16_SHELL/profile_helper.sh")"
+# shellcheck source=/dev/null
+source "$BASE16_SHELL/profile_helper.sh"
 
 main () {
   local start n nameCount key name nameCount
@@ -25,6 +26,7 @@ main () {
   while true; do
     name=${NAMES[$(( n - 1 ))]}
     _base16 "$BASE16_SCRIPTS/base16-$name.sh" "$name"
+    echo -e "colorscheme base16-$BASE16_THEME" > ~/.vimrc_background
     echo "$n/$nameCount: $name"
     read -r -sn1 key
     case $key in
