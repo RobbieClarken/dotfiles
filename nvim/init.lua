@@ -185,7 +185,7 @@ require("telescope").setup {
 require("telescope").load_extension("fzf") -- use fzf for fuzzy filtering
 require("telescope").load_extension("ui-select")
 
-vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files<cr>")
+vim.keymap.set("n", "<c-p>", "<cmd>Telescope find_files hidden=true<cr>")
 
 -------------------------------------------
 ---- williamboman/mason-lspconfig.nvim ----
