@@ -2,9 +2,18 @@
 set -eu
 
 main () {
-  project=$(git remote get-url origin | grep -Po '(?<=:).*(?=\.git)')
+  remote="${1:-origin}"
+  remoteUrl=$(git remote get-url "$remote")
+  project=$(echo "$remoteUrl" | grep -Po '(?<=:).*(?=\.git)')
   branch=$(git rev-parse --abbrev-ref HEAD)
-  open "https://gitlab.com/$project/-/merge_requests/new?merge_request%5Bsource_branch%5D=$branch"
+  if [[ "$remoteUrl" =~ github ]]; then
+    # open "https://github.com/$project/compare/$branch?expand=1"
+    open "https://github.com/$project/pull/new/$branch"
+  elif [[ "$remoteUrl" =~ gitlab ]]; then
+    open "https://gitlab.com/$project/-/merge_requests/new?merge_request%5Bsource_branch%5D=$branch"
+  else
+    echo "unsupported remote: $remoteUrl"
+  fi
 }
 
-main
+main "$@"
