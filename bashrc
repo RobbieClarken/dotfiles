@@ -70,8 +70,6 @@ alias tmp='pushd "$(mktemp -d)"'
 alias pytmp='pushd "$(mktemp -d)" && python3 -m venv .venv && source .venv/bin/activate'
 alias ungron='gron --ungron'
 
-alias ccut='cookiecutter gh:RobbieClarken/cookiecutter-python-min'
-
 alias dc='cd'
 alias oepn='open'
 alias vmi='vim'
@@ -187,15 +185,6 @@ pipf () {
   PIP_REQUIRE_VIRTUALENV=0 pip "$@"
 }
 
-pipvenv () {
-  PIPENV_VENV_IN_PROJECT=1 pipenv "$@"
-}
-
-f8 () {
-  mapfile -t files < <(flake8 -q)
-  if (( ${#files[@]} > 0 )); then vim "${files[@]}"; fi
-}
-
 mkcd () {
   mkdir -p "$1"
   # shellcheck disable=SC2164
@@ -214,11 +203,6 @@ cmi () {
 
 vwhich () { vim "$(command -v "$@")"; }
 complete -c vwhich
-
-token () {
-  bytes=${1:-8}
-  python3 -c "import secrets; print(secrets.token_hex($bytes))"
-}
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g

@@ -41,9 +41,6 @@ export MANPATH
 
 export PIP_REQUIRE_VIRTUALENV=1
 
-# Run pipenv shell in fancy mode so we get the right version of bash
-export PIPENV_SHELL_FANCY=1
-
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 
 if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
