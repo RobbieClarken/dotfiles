@@ -61,6 +61,7 @@ require("packer").startup(function(use)
     "neovim/nvim-lspconfig",
   }
   use "jose-elias-alvarez/typescript.nvim" -- extra typescript lsp functionality
+  use "pmizio/typescript-tools.nvim" -- replace typescript.nvim?
   use "dense-analysis/ale" -- asynchronous linter
 
   if packer_bootstrap then
@@ -250,22 +251,32 @@ require("null-ls").setup({
   },
 })
 
+require("typescript-tools").setup({
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    local opts = { buffer = bufnr }
+    vim.keymap.set("n", "<leader>ri", "<cmd>TSToolsAddMissingImports<cr><cmd>ALEFix<cr>", opts)
+    vim.keymap.set("n", "<leader>ru", "<cmd>TSToolsRemoveUnusedImports<cr><cmd>ALEFix<cr>", opts)
+    vim.diagnostic.enable(bufnr)
+  end,
+})
+
 --------------------------------------------
 ---- jose-elias-alvarez/typescript.nvim ----
 --------------------------------------------
 
-require("typescript").setup({
-  server = { -- pass options to lspconfig's setup method
-    on_attach = function(client, bufnr)
-      on_attach(client, bufnr)
-      local opts = { buffer = bufnr }
-      vim.keymap.set("n", "<leader>ri", "<cmd>TypescriptAddMissingImports<cr><cmd>ALEFix<cr>", opts)
-      vim.keymap.set("n", "<leader>ru", "<cmd>TypescriptRemoveUnused<cr><cmd>ALEFix<cr>", opts)
-    end,
-    root_dir = lspconfig.util.root_pattern("package.json"),
-    single_file_support = false,
-  },
-})
+-- require("typescript").setup({
+--   server = { -- pass options to lspconfig's setup method
+--     on_attach = function(client, bufnr)
+--       on_attach(client, bufnr)
+--       local opts = { buffer = bufnr }
+--       vim.keymap.set("n", "<leader>ri", "<cmd>TypescriptAddMissingImports<cr><cmd>ALEFix<cr>", opts)
+--       vim.keymap.set("n", "<leader>ru", "<cmd>TypescriptRemoveUnused<cr><cmd>ALEFix<cr>", opts)
+--     end,
+--     root_dir = lspconfig.util.root_pattern("package.json"),
+--     single_file_support = false,
+--   },
+-- })
 
 ----------------------------
 ---- dense-analysis/ale ----
