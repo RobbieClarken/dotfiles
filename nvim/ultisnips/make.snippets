@@ -1,9 +1,0 @@
-snippet build
-build:
-	docker build -t $1 .
-
-run: build
-	docker run -it --rm $1
-
-.PHONY: build run
-endsnippet
