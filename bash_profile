@@ -25,8 +25,8 @@ PATH=$HOME/.dotfiles/bin:$PATH
 PATH=$GOPATH/bin:$PATH
 PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH
 PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.cargo/bin:$PATH
 PATH=$HOME/.poetry/bin:$PATH
+PATH=$HOME/.deno/bin:$PATH
 PATH=/opt/squashfuse/bin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/gawk/libexec/gnubin:$PATH
@@ -60,4 +60,8 @@ fi
 if [ -f ~/.bashrc ]; then
   # shellcheck source=/dev/null
   . ~/.bashrc
+fi
+
+if [ -f ~/.cargo/env ]; then
+  . ~/.cargo/env
 fi

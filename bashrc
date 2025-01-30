@@ -33,10 +33,9 @@ if [ -f ~/.ghcup/env ]; then
   . ~/.ghcup/env
 fi
 
-if [[ -f ~/.fzf.bash ]]; then
+if hash fzf 2>/dev/null; then
 
-  # shellcheck source=/dev/null
-  . ~/.fzf.bash
+  eval "$(fzf --bash)"
 
   export FZF_DEFAULT_COMMAND='fd --type f --hidden'
   export FZF_CTRL_T_COMMAND='fd --hidden'
@@ -65,7 +64,6 @@ alias l='ll -h'
 alias la='ll -a'
 alias lr='ls -lG --color=auto -rt'
 alias grep='grep --color=auto'
-alias gri='rg -i'
 alias tmp='pushd "$(mktemp -d)"'
 alias pytmp='pushd "$(mktemp -d)" && python3 -m venv .venv && source .venv/bin/activate'
 alias ungron='gron --ungron'
@@ -163,7 +161,9 @@ k () {
 }
 
 tm () {
-  tmux "$@"
+  if ! tmux list-sessions; then
+    tmux new -d
+  fi
   # if user leaves tmux by exiting bash automatically reattach to next session
   while tmux attach | { read -r msg; [[ $msg == *exited* ]]; }; do :; done
 }
@@ -206,10 +206,6 @@ complete -c vwhich
 
 if hash __git_wrap__git_main 2>/dev/null; then
   complete -o bashdefault -o default -o nospace -F __git_wrap__git_main g
-fi
-
-if hash _rg 2>/dev/null; then
-  complete -o bashdefault -o default -F _rg gr
 fi
 
 if hash _docker 2>/dev/null; then
