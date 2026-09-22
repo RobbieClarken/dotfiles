@@ -1,8 +1,0 @@
-*.min.js
-__snapshots__
-.git
-Temp
-node_modules
-*.swp
-.cpcache
-!*.graphql

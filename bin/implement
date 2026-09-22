@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+schema='{
+  "type":"object",
+  "properties":{
+    "status":{"type":"string","enum":["done","blocked"]},
+    "notes":{"type":"string"}
+  },
+  "required":["status","notes"]
+}'
+
+for ticket in "$@"; do
+  logs_dir=".scratch/logs"
+  name=$(basename "$ticket" .md)
+  mkdir -p "$logs_dir"
+  log="$logs_dir/$name.jsonl"
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) $ticket (log: $log)"
+  head_before=$(git rev-parse HEAD)
+
+  claude -p "/implement $ticket, update status and commit" \
+    --append-system-prompt "Spawn any sub-agents with run_in_background: false. Only give the final structured output once everything, including review fixes and the commit, is finished." \
+    --model claude-opus-5 \
+    --effort medium \
+    --permission-mode auto \
+    --max-turns 150 \
+    --output-format stream-json \
+    --verbose \
+    --json-schema "$schema" \
+  | tee "$log" \
+  | jq -rj '
+      if .type == "assistant" then
+        (.message.content[] |
+          if .type == "text" then .text + "\n\n"
+          elif .type == "tool_use" then "→ " + .name + " " + (.input | tostring) + "\n\n"
+          else empty end)
+      else empty end'
+  rc=${PIPESTATUS[0]}
+
+  subtype=$(jq -rs '[.[] | select(.type=="result")] | last | .subtype // "missing"' "$log")
+  structured=$(jq -cs '[.[] | select(.type=="result" and .structured_output != null)] | last | .structured_output // {}' "$log")
+  status=$(jq -r '.status // "unknown"' <<<"$structured")
+  notes=$(jq -r '.notes // ""' <<<"$structured")
+  ticket_status=$(sed -n 's/^\*\*Status:\*\* //p' "$ticket")
+
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) subtype: $subtype"
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) status: $status (ticket: $ticket_status)"
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) notes:"
+  echo "$notes"
+
+  if [[ $rc -ne 0 || $subtype != "success" ]]; then
+    echo "Run failed on $ticket (exit $rc, subtype $subtype)"; exit 1
+  fi
+  if [[ $(git rev-parse HEAD) == "$head_before" ]]; then
+    echo "No commit made for $ticket"; exit 1
+  fi
+  if [[ $ticket_status != "done" ]]; then
+    echo "Ticket $ticket has status '$ticket_status' (Claude reported '$status')"; exit 1
+  fi
+  if [[ $status != "done" ]]; then
+    echo "Warning: Claude reported '$status' but the ticket is done and committed"
+  fi
+  echo "OK"
+done
