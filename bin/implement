@@ -10,7 +10,30 @@ schema='{
   "required":["status","notes"]
 }'
 
+status_of() { sed -n 's/^\*\*Status:\*\* //p' "$1"; }
+
+# Every ticket checked before any is run, so a bad one stops the batch
+# before it starts rather than partway through.
+todo=()
+bad=()
 for ticket in "$@"; do
+  if [[ ! -f $ticket ]]; then
+    bad+=("$ticket: no such file")
+    continue
+  fi
+  case $(status_of "$ticket") in
+    done) echo "== Skipping $ticket: already done" ;;
+    ready-for-agent) todo+=("$ticket") ;;
+    *) bad+=("$ticket: status '$(status_of "$ticket")'") ;;
+  esac
+done
+if [[ ${#bad[@]} -gt 0 ]]; then
+  echo "Not every ticket is done or ready-for-agent:"
+  printf '  %s\n' "${bad[@]}"
+  exit 1
+fi
+
+for ticket in "${todo[@]}"; do
   logs_dir=".scratch/logs"
   name=$(basename "$ticket" .md)
   mkdir -p "$logs_dir"
@@ -46,7 +69,7 @@ for ticket in "$@"; do
   structured=$(jq -cs '[.[] | select(.type=="result" and .structured_output != null)] | last | .structured_output // {}' "$log")
   status=$(jq -r '.status // "unknown"' <<<"$structured")
   notes=$(jq -r '.notes // ""' <<<"$structured")
-  ticket_status=$(sed -n 's/^\*\*Status:\*\* //p' "$ticket")
+  ticket_status=$(status_of "$ticket")
 
   echo "== $(date +%Y-%m-%dT%H:%M:%S%z) subtype: $subtype"
   echo "== $(date +%Y-%m-%dT%H:%M:%S%z) status: $status (ticket: $ticket_status)"
