@@ -19,7 +19,7 @@ for ticket in "$@"; do
   head_before=$(git rev-parse HEAD)
 
   claude -p "/implement $ticket, update status and commit" \
-    --append-system-prompt "Spawn any sub-agents with run_in_background: false. Only give the final structured output once everything, including review fixes and the commit, is finished." \
+    --append-system-prompt "Spawn any sub-agents with run_in_background: false. Only give the final structured output once everything, including review fixes and the commit, is finished. Set the ticket's Status line to exactly \`**Status:** done\`, with nothing after it, only when every acceptance criterion is met and ticked: this script checks it word for word. If any criterion is unmet or only partly met, the ticket is not done: do not set done, set the Status to \`needs-info\` or \`ready-for-human\` (see docs/agents/triage-labels.md), say what is missing and why under a \`## Comments\` heading at the bottom of the ticket, commit what was built, and report status blocked. A deliberate departure from the spec's wording that still meets every criterion is done; note it under \`## Comments\`." \
     --model claude-opus-5 \
     --effort medium \
     --permission-mode auto \
