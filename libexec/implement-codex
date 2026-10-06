@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-# Usage: implement-codex ticket.md [ticket.md ...]
 # Uses the configured Codex model, with high reasoning effort.
 schema='{
   "type":"object",
