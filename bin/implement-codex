@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# Usage: implement-codex ticket.md [ticket.md ...]
+# Uses the configured Codex model, with high reasoning effort.
+schema='{
+  "type":"object",
+  "properties":{
+    "status":{"type":"string","enum":["done","blocked","ready-for-human"]},
+    "notes":{"type":"string"}
+  },
+  "required":["status","notes"],
+  "additionalProperties":false
+}'
+
+status_of() { sed -n 's/^\*\*Status:\*\* //p' "$1"; }
+
+# Every ticket checked before any is run, so a bad one stops the batch
+# before it starts rather than partway through.
+todo=()
+bad=()
+for ticket in "$@"; do
+  if [[ ! -f $ticket ]]; then
+    bad+=("$ticket: no such file")
+    continue
+  fi
+  case $(status_of "$ticket") in
+    done) echo "== Skipping $ticket: already done" ;;
+    ready-for-agent) todo+=("$ticket") ;;
+    *) bad+=("$ticket: status '$(status_of "$ticket")'") ;;
+  esac
+done
+if [[ ${#bad[@]} -gt 0 ]]; then
+  echo "Not every ticket is done or ready-for-agent:"
+  printf '  %s\n' "${bad[@]}"
+  exit 1
+fi
+[[ ${#todo[@]} -gt 0 ]] || exit 0
+
+for dependency in codex jq git; do
+  command -v "$dependency" >/dev/null || { echo "Missing command: $dependency" >&2; exit 1; }
+done
+
+# Codex takes a schema file and writes the final structured response separately
+# from its event stream. Keep these temporary files out of the repository.
+run_dir=$(mktemp -d "${TMPDIR:-/tmp}/implement-codex.XXXXXX") || exit 1
+trap 'rm -rf -- "$run_dir"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+printf '%s\n' "$schema" > "$run_dir/schema.json" || exit 1
+
+instructions=$(cat <<'PROMPT'
+Follow the repository's implementation workflow. Use its implement skill if available; otherwise read its .claude/commands/implement.md or .claude/skills/implement/SKILL.md if present and apply that workflow to the ticket. Treat any $ARGUMENTS placeholder as the ticket path supplied above. Implement the ticket, update its status, and commit the work.
+
+Wait for any sub-agents to finish before proceeding. Only give the final structured output once everything, including review fixes and the commit, is finished.
+
+Set the ticket's Status line to exactly `**Status:** done`, with nothing after it, only when every acceptance criterion is met and ticked: this script checks it word for word. If any criterion is unmet or only partly met, the ticket is not done: do not set done, set the Status to `needs-info` or `ready-for-human` (see docs/agents/triage-labels.md), say what is missing and why under a `## Comments` heading at the bottom of the ticket, commit what was built, and report status blocked.
+
+If every criterion is met as far as you can verify but the change needs a human to test it before the next ticket can be started, do not set done: set the Status to `ready-for-human`, say under `## Comments` exactly what the human should test and why an agent could not, commit what was built, and report status ready-for-human. A deliberate departure from the spec's wording that still meets every criterion is done; note it under `## Comments`.
+
+Every commit you make must carry the trailer `Codex-Session: <id>`, where <id> is the current Codex thread ID from the environment variable $CODEX_THREAD_ID inside this session: pass `--trailer "Codex-Session: ${CODEX_THREAD_ID:?}"` to git commit and let the shell expand it. Do not include the runner's .scratch/logs files in commits.
+PROMPT
+)
+
+for ticket in "${todo[@]}"; do
+  logs_dir=".scratch/logs/codex"
+  name=$(basename "$ticket" .md)
+  mkdir -p "$logs_dir" || exit 1
+  log="$logs_dir/$name.codex.jsonl"
+  result="$run_dir/result.json"
+  rm -f -- "$result" || exit 1
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) $ticket (log: $log)"
+  head_before=$(git rev-parse HEAD) || exit 1
+
+  # Codex assigns the session ID; thread.started prints it as soon as it is known.
+  # --approve-for-me uses automatic review with the workspace-write sandbox.
+  # Codex exec has no equivalent to Claude's --max-turns option.
+  printf 'Ticket path: %s\n\n%s\n' "$ticket" "$instructions" \
+  | codex exec - \
+    --approve-for-me \
+    -c 'model_reasoning_effort="high"' \
+    --json \
+    --output-schema "$run_dir/schema.json" \
+    --output-last-message "$result" \
+  | tee "$log" \
+  | jq --unbuffered -rj '
+      if .type == "thread.started" then
+        "== session: " + .thread_id + "\n"
+      elif .type == "item.completed" and .item.type == "agent_message" then
+        .item.text + "\n\n"
+      elif .type == "item.started" and .item.type == "command_execution" then
+        "→ " + .item.command + "\n\n"
+      elif .type == "item.started" and .item.type == "mcp_tool_call" then
+        "→ " + .item.server + "/" + .item.tool + " " + (.item.arguments | tostring) + "\n\n"
+      elif .type == "item.completed" and .item.type == "file_change" then
+        "→ file_change " + (.item.changes | tostring) + "\n\n"
+      elif .type == "turn.failed" then
+        "Error: " + (.error.message // "turn failed") + "\n"
+      elif .type == "error" then
+        "Error: " + (.message // "unknown error") + "\n"
+      else empty end'
+  pipeline_status=("${PIPESTATUS[@]}")
+  rc=${pipeline_status[1]}
+
+  outcome=$(jq -rs '[.[] | select(.type == "turn.completed" or .type == "turn.failed")] | last | .type // "missing"' "$log") || exit 1
+  if [[ ${pipeline_status[0]} -ne 0 || $rc -ne 0 || ${pipeline_status[2]} -ne 0 || ${pipeline_status[3]} -ne 0 || $outcome != "turn.completed" ]]; then
+    echo "Run failed on $ticket (exit $rc, outcome $outcome; pipeline: ${pipeline_status[*]})"; exit 1
+  fi
+  if [[ ! -s $result ]] || ! jq -e -s '
+      length == 1 and (.[0] |
+        type == "object" and
+        (.status == "done" or .status == "blocked" or .status == "ready-for-human") and
+        (.notes | type == "string"))
+    ' "$result" >/dev/null; then
+    echo "Missing or invalid structured output for $ticket"; exit 1
+  fi
+  status=$(jq -r '.status' "$result")
+  notes=$(jq -r '.notes' "$result")
+  ticket_status=$(status_of "$ticket")
+
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) outcome: $outcome"
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) status: $status (ticket: $ticket_status)"
+  echo "== $(date +%Y-%m-%dT%H:%M:%S%z) notes:"
+  echo "$notes"
+
+  head_after=$(git rev-parse HEAD) || exit 1
+  if [[ $head_after == "$head_before" ]]; then
+    echo "No commit made for $ticket"; exit 1
+  fi
+  if [[ $ticket_status == "ready-for-human" && $status == "ready-for-human" ]]; then
+    echo "Ticket $ticket needs human testing before the next ticket; stopping here"; exit 0
+  fi
+  if [[ $ticket_status != "done" ]]; then
+    echo "Ticket $ticket has status '$ticket_status' (Codex reported '$status')"; exit 1
+  fi
+  if [[ $status != "done" ]]; then
+    echo "Warning: Codex reported '$status' but the ticket is done and committed"
+  fi
+  echo "OK"
+done

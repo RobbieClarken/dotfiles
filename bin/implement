@@ -34,7 +34,7 @@ if [[ ${#bad[@]} -gt 0 ]]; then
 fi
 
 for ticket in "${todo[@]}"; do
-  logs_dir=".scratch/logs"
+  logs_dir=".scratch/logs/claude"
   name=$(basename "$ticket" .md)
   mkdir -p "$logs_dir"
   log="$logs_dir/$name.jsonl"
