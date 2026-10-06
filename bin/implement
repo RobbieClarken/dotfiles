@@ -51,7 +51,7 @@ for ticket in "${todo[@]}"; do
     --model claude-opus-5-5 \
     --effort high \
     --permission-mode auto \
-    --max-turns 150 \
+    --max-turns 300 \
     --output-format stream-json \
     --verbose \
     --json-schema "$schema" \
