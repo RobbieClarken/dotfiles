@@ -8,6 +8,7 @@
 	excludesfile = ~/.dotfiles/git/gitignore_global
 [alias]
 	ll = log --date=short --format=format:'%C(auto)%h%C(reset) %C(cyan)%ad%C(reset) %C(green)(%ar)%C(reset)%C(auto)%d%C(reset) %s - %C(yellow)%an%C(reset)'
+	lr = log --raw
 	l = !git ll --all --graph
 	df = diff --word-diff --color-words
 	dfc = diff --word-diff --color-words --cached
@@ -18,17 +19,13 @@
 	pf = push --force-with-lease
 	sml = submodule foreach git log --oneline --decorate --graph -n 1
 	cmi = commit -m 'Initial commit'
-	find-merge = !git log $1..master --ancestry-path --merges --reverse
-	rb = !git fetch origin master:master && git rebase origin/master
-	fm = fetch origin master:master
-	b = !git fetch && git checkout origin/master -b
 [pull]
 	rebase = true
 [fetch]
 	prune = true
 [merge]
 	ff = only
-	conflictStyle = diff3
+	conflictStyle = zdiff3
 [push]
 	default = simple
 [diff "sopsdiffer"]
@@ -36,8 +33,10 @@
 [url "https://"]
 	insteadOf = git://
 [init]
-	defaultBranch = master
+	defaultBranch = main
 [commit]
 	gpgsign = true
 [rerere]
 	enabled = true
+[gpg]
+	program = /opt/homebrew/bin/gpg
