@@ -62,7 +62,8 @@ PROMPT
 )
 
 for ticket in "${todo[@]}"; do
-  logs_dir=".scratch/logs/codex"
+  # In the main checkout, so logs outlive the worktree the run happens in.
+  logs_dir="$(git worktree list --porcelain | sed -n '1s/^worktree //p')/.scratch/logs/codex"
   name=$(basename "$ticket" .md)
   mkdir -p "$logs_dir" || exit 1
   log="$logs_dir/$name.codex.jsonl"

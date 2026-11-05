@@ -2,10 +2,10 @@
 set -eu
 
 readonly REGION=${TEMP_EC2_REGION:-ap-southeast-2}
-readonly AMI=${TEMP_EC2_AMI:-ami-0d9f286195031c3d9}
+readonly AMI=${TEMP_EC2_AMI:-ami-0453a43f384c588e1}
 readonly SSH_KEY=${TEMP_EC2_SSH_KEY:-robbie-kj}
-readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-01e7bfb66c0bddfc2}
-readonly SSH_KEY_FILE=$HOME/.ssh/id_temp_ec2
+readonly SECURITY_GROUP=${TEMP_EC2_SECURITY_GROUP:-sg-0b7293a3ee853d891}
+readonly SSH_KEY_FILE=$HOME/.ssh/id_aws_kj
 
 do_start() {
   aws ec2 run-instances \

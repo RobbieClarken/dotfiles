@@ -25,12 +25,12 @@ PATH=$HOME/.dotfiles/bin:$PATH
 PATH=$GOPATH/bin:$PATH
 PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/x86_64:$PATH
 PATH=$HOME/.local/bin:$PATH
-PATH=$HOME/.poetry/bin:$PATH
 PATH=$HOME/.deno/bin:$PATH
-PATH=/opt/squashfuse/bin:$PATH
+PATH="$HOME/.bun/bin:$PATH"
 PATH=$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/gawk/libexec/gnubin:$PATH
 PATH=$HOMEBREW_PREFIX/opt/grep/libexec/gnubin:$PATH
+PATH=$HOMEBREW_PREFIX/opt/rustup/bin:$PATH
 PATH=$N_PREFIX/bin:$PATH
 export PATH
 
@@ -43,13 +43,11 @@ export PIP_REQUIRE_VIRTUALENV=1
 
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 
+export DO_NOT_TRACK=1
+
 if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
   # Remap caps lock to ctrl
   setxkbmap -option ctrl:nocaps
-fi
-
-if hash pyenv 2>/dev/null; then
-  eval "$(pyenv init -)"
 fi
 
 if [ -f ~/.bash_profile.local ]; then
@@ -64,4 +62,8 @@ fi
 
 if [ -f ~/.cargo/env ]; then
   . ~/.cargo/env
+fi
+
+if hash rbenv 2>/dev/null; then
+  eval "$(rbenv init - --no-rehash bash)"
 fi

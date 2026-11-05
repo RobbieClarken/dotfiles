@@ -5,6 +5,12 @@ set -euo pipefail
 # Runs the chosen agent (claude by default) under caffeinate so neither the
 # system nor the display sleeps mid-run. The agent scripts live in libexec,
 # off PATH, so this is the only way to run them.
+#
+# Each feature (.scratch/<feature>/) is implemented in its own git worktree, a
+# sibling of the main checkout named <repo>-<feature> on branch
+# implement/<feature>, so several features can be implemented at once. A later
+# run for the same feature reuses the worktree. Merging the branch and removing
+# the worktree are left to you.
 
 usage() { echo "Usage: implement [--agent claude|codex] ticket.md [ticket.md ...]" >&2; exit 2; }
 
@@ -23,6 +29,58 @@ case $agent in
   claude|codex) ;;
   *) echo "Unknown agent: $agent" >&2; usage ;;
 esac
+[[ ${#args[@]} -gt 0 ]] || usage
+
+# The worktree is made from HEAD, so it has only what is committed. Tickets
+# are passed on relative to the repository root, which holds in the worktree.
+tickets=()
+feature=
+for ticket in "${args[@]}"; do
+  [[ -f $ticket ]] || { echo "$ticket: no such file" >&2; exit 1; }
+  rel=$(git ls-files --full-name --error-unmatch -- "$ticket" 2>/dev/null) \
+    || { echo "$ticket: not committed, so the worktree won't have it" >&2; exit 1; }
+  git diff --quiet HEAD -- "$ticket" \
+    || { echo "$ticket: uncommitted changes, which the worktree won't have" >&2; exit 1; }
+  [[ $rel =~ ^\.scratch/([^/]+)/ ]] \
+    || { echo "$ticket: not under .scratch/<feature>/" >&2; exit 1; }
+  if [[ -n $feature && ${BASH_REMATCH[1]} != "$feature" ]]; then
+    echo "Tickets are from both $feature and ${BASH_REMATCH[1]}: run implement once per feature" >&2
+    exit 1
+  fi
+  feature=${BASH_REMATCH[1]}
+  tickets+=("$rel")
+done
+
+main=$(git worktree list --porcelain | sed -n '1s/^worktree //p')
+worktree="$(dirname "$main")/$(basename "$main")-$feature"
+branch="implement/$feature"
+if [[ ! -d $worktree ]]; then
+  # Fails if the branch is left over from an earlier run, rather than
+  # building on a branch that may be behind HEAD.
+  git worktree add -b "$branch" "$worktree" HEAD
+elif [[ $(git -C "$worktree" branch --show-current) != "$branch" ]]; then
+  echo "$worktree exists but is not on $branch" >&2; exit 1
+fi
+
+# Two runs in one worktree would trip over each other's commits. This script
+# waits on the agent rather than exec'ing it, so the lock lasts the whole run.
+lock="$(git -C "$worktree" rev-parse --absolute-git-dir)/implement.pid"
+if [[ -f $lock ]] && kill -0 "$(cat "$lock")" 2>/dev/null; then
+  echo "Already implementing in $worktree (pid $(cat "$lock"))" >&2; exit 1
+fi
+echo $$ > "$lock"
 
 libexec="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../libexec" && pwd)"
-exec caffeinate -i -d "$libexec/implement-$agent" ${args[@]+"${args[@]}"}
+cd "$worktree"
+# A new worktree has none of the main checkout's ignored files.
+if [[ ! -d node_modules ]]; then
+  if [[ -f package-lock.json ]]; then npm ci
+  elif [[ -f pnpm-lock.yaml ]]; then pnpm install --frozen-lockfile
+  fi
+fi
+
+echo "== Worktree: $worktree (branch $branch)"
+# Again at the end, however the run ends, as by then the line above has
+# scrolled far out of sight.
+trap 'echo "== Worktree: $worktree (branch $branch)"' EXIT
+caffeinate -i -d "$libexec/implement-$agent" "${tickets[@]}"

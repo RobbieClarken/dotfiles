@@ -40,7 +40,6 @@ if hash fzf 2>/dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden'
   export FZF_CTRL_T_COMMAND='fd --hidden'
   export FZF_ALT_C_COMMAND='fd --type d --exclude Library'
-  bind -x '"\C-q": fzf-file-widget'
   bind '"\C-t": transpose-chars'
 
   _fzf_compgen_path() {
@@ -227,4 +226,19 @@ fi
 if [ -f ~/.bashrc.local ]; then
   # shellcheck source=/dev/null
   . ~/.bashrc.local
+fi
+
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+
+if [ -f ~/.config/broot/launcher/bash/br ]; then
+  . ~/.config/broot/launcher/bash/br
+fi
+
+# cf complete bash > ~/.config/bash/completions/cf.sh
+if [ -f ~/.config/bash/completions/cf.sh ]; then
+  . ~/.config/bash/completions/cf.sh
 fi
