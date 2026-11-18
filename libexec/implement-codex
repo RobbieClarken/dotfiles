@@ -14,6 +14,18 @@ schema='{
 
 status_of() { sed -n 's/^\*\*Status:\*\* //p' "$1"; }
 
+# A ticket's path within its checkout, minus .scratch/ and .md, so tickets
+# with the same file name in different features get different logs.
+log_name() {
+  local dir top path
+  dir=$(cd "$(dirname "$1")" && pwd -P) || return 1
+  top=$(git -C "$dir" rev-parse --show-toplevel) || return 1
+  path="$dir/$(basename "$1")"
+  path=${path#"$top"/}
+  path=${path#.scratch/}
+  printf '%s\n' "${path%.md}"
+}
+
 # Every ticket checked before any is run, so a bad one stops the batch
 # before it starts rather than partway through.
 todo=()
@@ -64,9 +76,9 @@ PROMPT
 for ticket in "${todo[@]}"; do
   # In the main checkout, so logs outlive the worktree the run happens in.
   logs_dir="$(git worktree list --porcelain | sed -n '1s/^worktree //p')/.scratch/logs/codex"
-  name=$(basename "$ticket" .md)
-  mkdir -p "$logs_dir" || exit 1
+  name=$(log_name "$ticket") || exit 1
   log="$logs_dir/$name.codex.jsonl"
+  mkdir -p "$(dirname "$log")" || exit 1
   result="$run_dir/result.json"
   rm -f -- "$result" || exit 1
   echo "== $(date +%Y-%m-%dT%H:%M:%S%z) $ticket (log: $log)"
