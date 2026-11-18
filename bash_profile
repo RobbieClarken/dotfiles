@@ -43,6 +43,9 @@ export PIP_REQUIRE_VIRTUALENV=1
 
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 
+export PI_HARDWARE_CURSOR=1
+
+# fixes bug in `cf`
 export DO_NOT_TRACK=1
 
 if [ "$(uname)" = "Linux" ] && hash setxkbmap 2>/dev/null; then
