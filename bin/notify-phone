@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Usage: notify-phone message
+# Sends a push notification to the phone through ntfy.sh. The topic comes from
+# $NTFY_TOPIC, which is as good as a password: anyone who has it can read and
+# send the notifications. So it is exported from ~/.bashrc.local rather than
+# kept in this repository. Without it this does nothing, so that callers still
+# work on a machine that isn't set up for it.
+
+[[ $# -gt 0 ]] || { echo "Usage: notify-phone message" >&2; exit 2; }
+[[ -n ${NTFY_TOPIC:-} ]] || exit 0
+
+# --data-raw as -d would read a message starting with @ as a file name.
+curl -fsS --max-time 10 -H "Title: Alert" --data-raw "$*" \
+  "https://ntfy.sh/$NTFY_TOPIC" >/dev/null

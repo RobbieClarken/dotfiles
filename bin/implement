@@ -11,6 +11,8 @@ set -euo pipefail
 # implement/<feature>, so several features can be implemented at once. A later
 # run for the same feature reuses the worktree. Merging the branch and removing
 # the worktree are left to you.
+#
+# When the run ends, notify-phone says so, and whether it failed.
 
 usage() { echo "Usage: implement [--agent claude|codex] ticket.md [ticket.md ...]" >&2; exit 2; }
 
@@ -70,8 +72,30 @@ if [[ -f $lock ]] && kill -0 "$(cat "$lock")" 2>/dev/null; then
 fi
 echo $$ > "$lock"
 
-libexec="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../libexec" && pwd)"
+bin="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
+libexec="$(cd "$bin/../libexec" && pwd)"
 cd "$worktree"
+
+echo "== Worktree: $worktree (branch $branch)"
+# Again at the end, however the run ends, as by then the line above has
+# scrolled far out of sight. And a notification to the phone, unless the run
+# was interrupted, as whoever did that knows it has ended.
+finish() {
+  local rc=$?
+  echo "== Worktree: $worktree (branch $branch)"
+  case $rc in
+    0) "$bin/notify-phone" "implement $feature: finished" ;;
+    129|130|143) ;;
+    *) "$bin/notify-phone" "implement $feature: FAILED (exit $rc)" ;;
+  esac || true
+}
+trap finish EXIT
+# A signal that kills the shell outright leaves $? at 0 in the EXIT trap,
+# which would pass for a finished run.
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 # A new worktree has none of the main checkout's ignored files.
 if [[ ! -d node_modules ]]; then
   if [[ -f package-lock.json ]]; then npm ci
@@ -79,8 +103,4 @@ if [[ ! -d node_modules ]]; then
   fi
 fi
 
-echo "== Worktree: $worktree (branch $branch)"
-# Again at the end, however the run ends, as by then the line above has
-# scrolled far out of sight.
-trap 'echo "== Worktree: $worktree (branch $branch)"' EXIT
 caffeinate -i -d "$libexec/implement-$agent" "${tickets[@]}"
