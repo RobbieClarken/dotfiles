@@ -1,0 +1,547 @@
+#!/usr/bin/env python3
+"""
+mdprint - render a markdown file as a printable PDF that keeps every character
+of the source. The raw markdown is syntax highlighted, line numbered and
+soft-wrapped; top-level tables are drawn as a grid with the pipes kept.
+
+Usage: mdprint [options] FILE.md
+
+  -o, --output PATH   PDF to write (default: FILE.pdf next to the input)
+  -l, --landscape     landscape instead of portrait
+  -p, --paper SIZE    a4 (default) or letter
+      --html          also keep the intermediate HTML next to the PDF
+      --open          open the PDF when done
+
+Needs Python 3.8+ and Google Chrome / Chromium / Edge / Brave (headless).
+Set MDPRINT_CHROME to use a specific browser binary.
+"""
+import argparse
+import glob
+import html
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib.parse
+from datetime import date
+
+
+# ---------------------------------------------------------------- highlighting
+
+def esc(s):
+    return html.escape(s, quote=False)
+
+
+def span(cls, text):
+    return f'<span class="{cls}">{esc(text)}</span>'
+
+
+INLINE = re.compile(
+    r"(?P<code>`+)(?P<codebody>.+?)(?P=code)"
+    r"|(?P<auto><)(?P<autourl>https?://[^>\s]+)>"
+    r"|(?P<html><!--.*?-->|</?[A-Za-z][^>]*>)"
+    r"|(?P<bold>\*\*|__)(?P<boldbody>.+?)(?P=bold)"
+    r"|(?P<strike>~~)(?P<strikebody>.+?)~~"
+    r"|(?<![\w*])(?P<em>\*)(?P<embody>[^*\s][^*]*?)\*(?![\w*])"
+    r"|(?<![\w_])(?P<uem>_)(?P<uembody>[^_\s][^_]*?)_(?![\w_])"
+    r"|(?P<link>!?\[)(?P<linktext>[^\]]+)\]\((?P<url>[^)]+)\)"
+    r"|(?P<arrow>──→|→|←|─|│|▼|▲)"
+)
+
+
+def inline(text):
+    out, pos = [], 0
+    for m in INLINE.finditer(text):
+        out.append(esc(text[pos:m.start()]))
+        g = m.group
+        if g("code"):
+            t = g("code")
+            out.append(f'<span class="ic">{span("mk", t)}{esc(g("codebody"))}{span("mk", t)}</span>')
+        elif g("auto"):
+            out.append(f'{span("mk", "<")}{span("lt", g("autourl"))}{span("mk", ">")}')
+        elif g("html"):
+            out.append(span("htm", g("html")))
+        elif g("bold"):
+            t = g("bold")
+            out.append(f'<span class="b">{span("mk", t)}{inline(g("boldbody"))}{span("mk", t)}</span>')
+        elif g("strike"):
+            out.append(f'<span class="s">{span("mk", "~~")}{inline(g("strikebody"))}{span("mk", "~~")}</span>')
+        elif g("em") or g("uem"):
+            t = g("em") or g("uem")
+            body = g("embody") if g("em") else g("uembody")
+            out.append(f'<span class="i">{span("mk", t)}{inline(body)}{span("mk", t)}</span>')
+        elif g("link"):
+            out.append(
+                f'{span("mk", g("link"))}<span class="lt">{inline(g("linktext"))}</span>'
+                f'{span("mk", "](")}{span("url", g("url"))}{span("mk", ")")}'
+            )
+        elif g("arrow"):
+            out.append(span("arrow", g("arrow")))
+        pos = m.end()
+    out.append(esc(text[pos:]))
+    return "".join(out)
+
+
+LIST = re.compile(r"^(\s*)([-*+]|\d+[.)])(\s+)(\[[ xX]\]\s+)?(.*)$")
+HEAD = re.compile(r"^(#{1,6})(\s+)(.*)$")
+HR = re.compile(r"^\s{0,3}([-*_])(\s*\1){2,}\s*$")
+TABLE_SEP = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$")
+FENCE_OPEN = re.compile(r"^(\s{0,3})(`{3,}|~{3,})(.*)$")
+FRONT_KEY = re.compile(r"^(\s*)([^\s:#][^:]*?)(:)(\s.*|)$")
+
+
+def line_table_row(line, header):
+    parts = []
+    for i, c in enumerate(split_pipes(line)):
+        if i:
+            parts.append(span("pipe", "|"))
+        parts.append(f'<span class="th">{inline(c)}</span>' if header else inline(c))
+    return "".join(parts)
+
+
+def md_line(line, nxt):
+    """One markdown line, rendered on its own. Returns (html, css_class, hang_ch)."""
+    if not line.strip():
+        return "", "", 0
+    m = HEAD.match(line)
+    if m:
+        lvl = len(m.group(1))
+        return span("hmk", m.group(1)) + esc(m.group(2)) + inline(m.group(3)), f"h h{lvl}", lvl + 1
+    if HR.match(line):
+        return span("hr", line), "hrline", 0
+    if line.lstrip().startswith(">"):
+        m = re.match(r"^(\s*>\s?)(.*)$", line)
+        return span("qmk", m.group(1)) + inline(m.group(2)), "quote", len(m.group(1))
+    if line.lstrip().startswith("|"):
+        if TABLE_SEP.match(line):
+            return span("pipe", line), "tbl", 0
+        return line_table_row(line, nxt is not None and TABLE_SEP.match(nxt) is not None), "tbl", 2
+    m = LIST.match(line)
+    if m:
+        indent, marker, sp, box, rest = m.groups()
+        box = box or ""
+        marker_html = span("lmk", marker) + esc(sp) + (span("cb", box) if box else "")
+        hang = len(indent) + len(marker) + len(sp) + len(box)
+        return esc(indent) + marker_html + inline(rest), "li", hang
+    return inline(line), "", len(line) - len(line.lstrip(" "))
+
+
+# ---------------------------------------------------------------------- tables
+
+def split_pipes(line):
+    """Split on unescaped pipes (GFM rules: code spans do not protect pipes)."""
+    parts, buf, i = [], [], 0
+    while i < len(line):
+        if line[i] == "\\" and i + 1 < len(line):
+            buf.append(line[i:i + 2])
+            i += 2
+        elif line[i] == "|":
+            parts.append("".join(buf))
+            buf = []
+            i += 1
+        else:
+            buf.append(line[i])
+            i += 1
+    parts.append("".join(buf))
+    return parts
+
+
+def row_cells(line):
+    """-> (lead, has_lead_pipe, cells, has_trail_pipe, trail). Concatenation
+    lead + '|'? + '|'.join(cells) + '|'? + trail == line."""
+    tokens = split_pipes(line)
+    lead_pipe = line.lstrip().startswith("|")
+    stripped = line.rstrip()
+    trail_pipe = len(tokens) > 1 and stripped.endswith("|") and not stripped.endswith("\\|")
+    if lead_pipe and trail_pipe and len(tokens) == 2:  # a lone "|"
+        return tokens[0], True, [], False, tokens[1]
+    lead = tokens.pop(0) if lead_pipe else ""
+    trail = tokens.pop() if trail_pipe else ""
+    return lead, lead_pipe, tokens, trail_pipe, trail
+
+
+def is_table_start(lines, idx):
+    line = lines[idx]
+    if line.lstrip().startswith("|"):
+        return True
+    nxt = lines[idx + 1] if idx + 1 < len(lines) else None
+    return "|" in line and nxt is not None and "|" in nxt and TABLE_SEP.match(nxt) is not None
+
+
+def render_table(block, start_n):
+    rows = [row_cells(l) for l in block]
+    ncells = max(1, max(len(r[2]) for r in rows))
+    sep_idx = next((i for i, l in enumerate(block) if TABLE_SEP.match(l)), None)
+
+    weights = [0.0] * ncells
+    for i, r in enumerate(rows):
+        if i != sep_idx:
+            for c, cell in enumerate(r[2]):
+                weights[c] = max(weights[c], len(cell.strip()))
+    weights = [max(w, 3) ** 0.5 for w in weights]
+    total = sum(weights)
+    cols = '<col class="c-no"><col class="c-pp0">' + "".join(
+        ('<col class="c-pp">' if c else "") + f'<col style="width:{w / total * 100:.1f}%">'
+        for c, w in enumerate(weights)
+    ) + '<col class="c-pp">'
+
+    out = [f'<table class="mdt"><colgroup>{cols}</colgroup>']
+    for i, (lead, lp, cells, tp, trail) in enumerate(rows):
+        kind = "sep" if i == sep_idx else ("head" if sep_idx is not None and i < sep_idx else "body")
+        tds = [f'<td class="no">{start_n + i}</td>']
+        tds.append(f'<td class="pp">{esc(lead)}{"|" if lp else ""}</td>')
+        for c in range(ncells):
+            if c:
+                tds.append(f'<td class="pp">{"|" if c < len(cells) else ""}</td>')
+            cell = cells[c] if c < len(cells) else ""
+            body = span("sepd", cell) if kind == "sep" else inline(cell)
+            tds.append(f'<td class="cell">{body}</td>')
+        tds.append(f'<td class="pp">{"|" if tp else ""}{esc(trail)}</td>')
+        out.append(f'<tr class="{kind}">{"".join(tds)}</tr>')
+    out.append("</table>")
+    return "".join(out)
+
+
+# -------------------------------------------------------------------- document
+
+def render_body(src):
+    lines = re.split(r"\r?\n", src)
+    if lines and lines[-1] == "":
+        lines.pop()
+
+    front_end = -1
+    if lines and lines[0] == "---":
+        front_end = next((i for i in range(1, len(lines)) if lines[i] in ("---", "...")), -1)
+
+    rows = []
+    keep_open = False  # heading waiting to be grouped with its first content
+
+    def emit(row, is_heading=False, is_blank=False):
+        nonlocal keep_open
+        if is_heading and not keep_open:
+            rows.append('<div class="keep">')
+            keep_open = True
+        rows.append(row)
+        if keep_open and not is_heading and not is_blank:
+            rows.append("</div>")
+            keep_open = False
+
+    fence = None  # (char, length, lang)
+    idx = 0
+    while idx < len(lines):
+        line = lines[idx]
+        n = idx + 1
+        nxt = lines[idx + 1] if idx + 1 < len(lines) else None
+        hang = 0
+
+        if idx <= front_end:
+            if idx in (0, front_end):
+                body = span("fmk", line)
+                cls = "front " + ("front-start" if idx == 0 else "front-end")
+            else:
+                m = FRONT_KEY.match(line)
+                if m:
+                    ind, k, colon, v = m.groups()
+                    body = esc(ind) + span("key", k) + span("mk", colon) + span("val", v)
+                    hang = len(ind) + len(k) + 2
+                else:
+                    body = span("val", line)
+                    hang = len(line) - len(line.lstrip(" "))
+                cls = "front"
+        elif fence:
+            close = re.match(r"^\s{0,3}(`{3,}|~{3,})\s*$", line)
+            if close and close.group(1)[0] == fence[0] and len(close.group(1)) >= fence[1]:
+                body, cls = span("fmk", line), "code code-end"
+                fence = None
+            elif fence[2] in ("markdown", "md"):
+                nested = FENCE_OPEN.match(line)
+                if nested:  # a fence inside the markdown example
+                    body = esc(nested.group(1)) + span("fmk", nested.group(2)) + span("lang", nested.group(3))
+                    c = ""
+                else:
+                    body, c, hang = md_line(line, nxt)
+                cls = f"code {c}"
+            else:
+                body, cls, hang = esc(line), "code", len(line) - len(line.lstrip(" "))
+        else:
+            fm = FENCE_OPEN.match(line)
+            if fm and not (fm.group(2)[0] == "`" and "`" in fm.group(3)):
+                info = fm.group(3)
+                fence = (fm.group(2)[0], len(fm.group(2)), (info.split() or [""])[0].lower())
+                body = esc(fm.group(1)) + span("fmk", fm.group(2)) + span("lang", info)
+                cls = "code code-start"
+            elif is_table_start(lines, idx):
+                end = idx
+                while end + 1 < len(lines) and lines[end + 1].strip() and "|" in lines[end + 1]:
+                    end += 1
+                emit(render_table(lines[idx:end + 1], n))
+                idx = end + 1
+                continue
+            else:
+                body, cls, hang = md_line(line, nxt)
+
+        style = f' style="--hang:{hang}ch"' if hang else ""
+        emit(
+            f'<div class="ln {cls}"{style}><span class="no">{n}</span>'
+            f'<span class="tx">{body or "&#8203;"}</span></div>',
+            is_heading=cls.startswith("h "),
+            is_blank=not line.strip(),
+        )
+        idx += 1
+
+    if keep_open:
+        rows.append("</div>")
+    return "\n".join(rows), len(lines)
+
+
+def font_faces():
+    dirs = [os.path.expanduser("~/Library/Fonts"), "/Library/Fonts",
+            os.path.expanduser("~/.local/share/fonts"), os.path.expanduser("~/.fonts"),
+            "/usr/share/fonts"]
+    styles = [("Regular", 400, "normal"), ("Bold", 700, "normal"), ("Italic", 400, "italic"),
+              ("BoldItalic", 700, "italic"), ("ExtraBold", 800, "normal")]
+    # Prefer the no-ligature variants so "->", "!=" etc. print as typed.
+    families = ["JetBrainsMonoNLNerdFontMono", "JetBrainsMonoNL", "JetBrainsMonoNLNerdFont"]
+    for fam in families:
+        found = {}
+        for suffix, weight, style in styles:
+            for d in dirs:
+                hits = glob.glob(os.path.join(d, "**", f"{fam}-{suffix}.ttf"), recursive=True)
+                if hits:
+                    found[suffix] = (hits[0], weight, style)
+                    break
+        if "Regular" in found:
+            return "\n".join(
+                f'@font-face {{ font-family: MdPrintMono; font-weight: {w}; font-style: {s}; '
+                f'src: url("file://{urllib.parse.quote(p)}"); }}'
+                for p, w, s in found.values()
+            )
+    return ""
+
+
+CSS = """
+:root {
+  --ink: #24292f; --muted: #8c959f; --faint: #d0d7de;
+  --accent: #6639ba; --accent2: #0a5bd6; --green: #116329; --orange: #9a4b00;
+  --code-bg: #f6f8fa; --ic-bg: #eff1f3; --front-bg: #fbf7ff;
+}
+@page {
+  size: __PAGE__;
+  margin: 16mm 14mm 16mm 14mm;
+  @bottom-left { content: "__FOOTER__"; font: 7pt MdPrintMono, "JetBrains Mono", Menlo, monospace; color: #8c959f; }
+  @bottom-right { content: counter(page) " / " counter(pages); font: 7pt MdPrintMono, "JetBrains Mono", Menlo, monospace; color: #8c959f; }
+}
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin: 0; font-family: MdPrintMono, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  font-size: 8.4pt; line-height: 1.5; color: var(--ink); tab-size: 4; }
+
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 6mm;
+  border-bottom: 2px solid var(--accent); padding-bottom: 2.5mm; margin-bottom: 4mm; }
+header .title { font-size: 13pt; font-weight: 800; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+header .title span { color: var(--accent); }
+header .meta { font-size: 7pt; color: var(--muted); text-align: right; white-space: nowrap; }
+
+.ln { display: grid; grid-template-columns: var(--gutter) 1fr; break-inside: avoid; }
+.no { color: var(--faint); text-align: right; padding-right: 2.5mm; font-size: 6.6pt;
+  padding-top: 0.25em; border-right: 1px solid #eaeef2; }
+.tx { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(2.5mm + var(--hang, 0ch));
+  text-indent: calc(-1 * var(--hang, 0ch)); min-height: 1.5em; }
+.keep { break-inside: avoid; }
+
+.mk { color: var(--muted); font-weight: 400; font-style: normal; text-decoration: none; }
+.b { font-weight: 700; color: #1f2328; }
+.i { font-style: italic; }
+.s { text-decoration: line-through; text-decoration-color: #8c959f; }
+.ic { background: var(--ic-bg); border-radius: 2px; color: #a0111f; padding: 0 0.1em; }
+.ic .mk { color: #c9a0a5; }
+.lt { color: var(--accent2); text-decoration: underline; text-decoration-color: #a8c7fa; }
+.url { color: var(--muted); }
+.htm { color: #6e7781; font-style: italic; }
+.arrow { color: var(--accent); }
+.hr { color: #c8b5ee; letter-spacing: 0.1em; }
+
+.h .tx { font-weight: 800; }
+.hmk { color: var(--accent); font-weight: 700; }
+.h1 .tx { font-size: 1.55em; letter-spacing: -0.02em; }
+.h2 .tx { font-size: 1.25em; color: var(--accent); }
+.h2 .hmk { color: #b69ce8; }
+.h3 .tx { font-size: 1.08em; color: #1f2328; }
+.ln.h2:not(.code) { margin-top: 2.5mm; }
+.ln.h2:not(.code) .tx { border-bottom: 1px solid #e4dcf5; padding-bottom: 0.5mm; }
+.ln.h3:not(.code) { margin-top: 1mm; }
+.ln.h1:not(.code) { margin-top: 1mm; }
+.code.h .tx { font-size: 1em; letter-spacing: 0; border-bottom: 0; }
+
+.lmk { color: var(--accent); font-weight: 700; }
+.cb { color: var(--green); font-weight: 700; }
+.quote .tx { color: #57606a; font-style: italic; }
+.quote .tx .b { color: #424a53; }
+.qmk { color: var(--accent); font-weight: 800; font-style: normal; }
+.pipe { color: #b69ce8; }
+.th { font-weight: 700; }
+
+table.mdt { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0.8mm 0; break-inside: avoid; }
+.mdt col.c-no { width: var(--gutter); }
+.mdt col.c-pp { width: 2.4ch; }
+.mdt col.c-pp0 { width: calc(2.4ch + 2.5mm); }
+.mdt tr { break-inside: avoid; }
+.mdt td { vertical-align: top; padding: 0; }
+.mdt td.no { color: var(--faint); text-align: right; padding: 0.75mm 2.5mm 0 0; font-size: 6.6pt;
+  border-right: 1px solid #eaeef2; }
+.mdt td.cell { white-space: pre-wrap; overflow-wrap: anywhere; padding: 0.5mm 0.4ch 0.7mm 1ch;
+  text-indent: -1ch; border-bottom: 1px solid #e8e2f4; }
+.mdt td.pp { white-space: pre; color: #b69ce8; text-align: center; padding-top: 0.5mm;
+  border-bottom: 1px solid #e8e2f4;
+  background: linear-gradient(to right, transparent calc(50% - 0.5px), #c9b8ea calc(50% - 0.5px),
+    #c9b8ea calc(50% + 0.5px), transparent calc(50% + 0.5px)) no-repeat center 1.25em / 100% calc(100% - 1.25em); }
+.mdt td.pp:empty { background: none; }
+.mdt td.pp:nth-child(2) { background-position: calc(50% + 1.25mm) 1.25em; padding-left: 2.5mm; }
+.mdt tr.head td.cell, .mdt tr.head td.pp { background-color: #f4effc; font-weight: 700; color: var(--accent); }
+.mdt tr.head td.cell .mk { font-weight: 400; }
+.mdt tr.head td { border-top: 1px solid #e8e2f4; }
+.mdt tr td.no { border-top: 0; border-bottom: 0; background: none; }
+.mdt tr.sep td.cell, .mdt tr.sep td.pp { border-bottom: 1.5px solid #c8b5ee; }
+.mdt tr.sep td { font-size: 0.8em; line-height: 1.2; padding-top: 0.2mm; padding-bottom: 0.2mm; }
+.mdt tr.body:nth-of-type(even) td.cell, .mdt tr.body:nth-of-type(even) td.pp { background-color: #fcfbfe; }
+.sepd { color: #b69ce8; }
+
+.front .tx { background: var(--front-bg); border-left: 2px solid #c8b5ee; }
+.front-start .tx { border-top-right-radius: 4px; padding-top: 0.6mm; }
+.front-end .tx { border-bottom-right-radius: 4px; padding-bottom: 0.6mm; }
+.key { color: var(--accent); font-weight: 700; }
+.val { color: #3d444d; }
+
+.code .tx { background: var(--code-bg); border-left: 2px solid var(--faint); }
+.code-start .tx { border-top-right-radius: 4px; margin-top: 0.6mm; padding-top: 0.4mm; }
+.code-end .tx { border-bottom-right-radius: 4px; margin-bottom: 0.6mm; padding-bottom: 0.4mm; }
+.fmk { color: var(--muted); }
+.lang { color: var(--orange); font-weight: 700; }
+"""
+
+
+def build_html(src, title, subtitle, footer, page):
+    body, count = render_body(src)
+    gutter = f"{4.5 + max(3, len(str(count)))}mm"
+    css_footer = footer.replace("\\", "\\\\").replace('"', '\\"')
+    css = font_faces() + CSS.replace("__PAGE__", page).replace("__FOOTER__", css_footer)
+    head, _, name = title.rpartition("/")
+    title_html = (f"{esc(head)}<span>/</span>" if head else "") + esc(name)
+    meta = "<br>".join(esc(x) for x in [subtitle, f"{count} lines"] if x)
+    return f"""<!doctype html>
+<html><head><meta charset="utf-8"><title>{esc(title)}</title>
+<style>{css}</style></head>
+<body style="--gutter:{gutter}">
+<header><div class="title">{title_html}</div><div class="meta">{meta}</div></header>
+{body}
+</body></html>"""
+
+
+# --------------------------------------------------------------------- context
+
+def git(args, cwd):
+    try:
+        r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+    except FileNotFoundError:
+        return None
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def describe(path):
+    """-> (title, subtitle, footer) for the header and page footer."""
+    d, name = os.path.split(path)
+    parent = os.path.basename(d)
+    title = f"{parent}/{name}" if parent else name
+    top = git(["rev-parse", "--show-toplevel"], d)
+    if top:
+        rel = os.path.relpath(path, top)
+        remote = git(["remote", "get-url", "origin"], top) or ""
+        m = re.search(r"[:/]([^/:]+/[^/]+?)(?:\.git)?/?$", remote)
+        repo = m.group(1) if m else os.path.basename(top)
+        commit = git(["log", "-1", "--format=%h · %cs", "--", rel], top)
+        status = git(["status", "--porcelain", "--", rel], top) or ""
+        state = "untracked" if status.startswith("??") else ("uncommitted changes" if status else "")
+        return title, " · ".join(x for x in [repo, commit, state] if x), rel
+    mtime = date.fromtimestamp(os.path.getmtime(path)).isoformat()
+    try:
+        footer = os.path.relpath(path)
+    except ValueError:
+        footer = path
+    if footer.startswith(".."):
+        footer = path.replace(os.path.expanduser("~"), "~", 1)
+    return title, f"modified {mtime}", footer
+
+
+def find_browser():
+    env = os.environ.get("MDPRINT_CHROME")
+    if env:
+        return env
+    for app in ["Google Chrome", "Chromium", "Microsoft Edge", "Brave Browser", "Google Chrome Canary"]:
+        for root in ["/Applications", os.path.expanduser("~/Applications")]:
+            p = f"{root}/{app}.app/Contents/MacOS/{app}"
+            if os.access(p, os.X_OK):
+                return p
+    for name in ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
+                 "microsoft-edge", "brave-browser", "chrome"]:
+        p = shutil.which(name)
+        if p:
+            return p
+    return None
+
+
+# ------------------------------------------------------------------------ main
+
+def main():
+    ap = argparse.ArgumentParser(
+        prog="mdprint",
+        description="Render a markdown file as a pretty, printable PDF that keeps every character of the source.")
+    ap.add_argument("file", help="markdown file to print")
+    ap.add_argument("-o", "--output", help="PDF to write (default: FILE.pdf next to the input)")
+    ap.add_argument("-l", "--landscape", action="store_true", help="landscape orientation")
+    ap.add_argument("-p", "--paper", choices=["a4", "letter"], default="a4", help="paper size (default a4)")
+    ap.add_argument("--html", action="store_true", help="also keep the intermediate HTML next to the PDF")
+    ap.add_argument("--open", action="store_true", help="open the PDF when done")
+    args = ap.parse_args()
+
+    path = os.path.abspath(args.file)
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            src = f.read()
+    except (OSError, UnicodeDecodeError) as e:
+        sys.exit(f"mdprint: cannot read {args.file}: {e}")
+
+    out = os.path.abspath(args.output or os.path.splitext(path)[0] + ".pdf")
+    page = f"{'A4' if args.paper == 'a4' else 'letter'} {'landscape' if args.landscape else 'portrait'}"
+    title, subtitle, footer = describe(path)
+    doc = build_html(src, title, subtitle, footer, page)
+
+    browser = find_browser()
+    if not browser:
+        sys.exit("mdprint: no Chrome/Chromium found; set MDPRINT_CHROME to a browser binary")
+
+    with tempfile.TemporaryDirectory(prefix="mdprint-") as tmp:
+        html_path = os.path.join(tmp, "doc.html")
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(doc)
+        if os.path.exists(out):
+            os.remove(out)
+        r = subprocess.run(
+            [browser, "--headless", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
+             f"--user-data-dir={os.path.join(tmp, 'profile')}", "--allow-file-access-from-files",
+             "--no-pdf-header-footer", f"--print-to-pdf={out}", "file://" + urllib.parse.quote(html_path)],
+            capture_output=True, text=True,
+        )
+        if not os.path.exists(out) or os.path.getsize(out) == 0:
+            sys.exit(f"mdprint: browser failed to write {out}\n{r.stderr.strip()}")
+        if args.html:
+            shutil.copyfile(html_path, os.path.splitext(out)[0] + ".html")
+
+    print(out)
+    if args.open:
+        subprocess.run(["open" if sys.platform == "darwin" else "xdg-open", out])
+
+
+if __name__ == "__main__":
+    main()

@@ -66,6 +66,7 @@ alias grep='grep --color=auto'
 alias tmp='pushd "$(mktemp -d)"'
 alias pytmp='pushd "$(mktemp -d)" && python3 -m venv .venv && source .venv/bin/activate'
 alias ungron='gron --ungron'
+alias photoshop='open -b com.adobe.Photoshop'
 
 alias dc='cd'
 alias oepn='open'
